@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Initialize Typed.js for the typing animation ---
     if (document.getElementById('typing-animation')) {
         new Typed('#typing-animation', {
             strings: [
@@ -17,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Smooth Scroll for Navigation Links ---
     document.querySelectorAll('a[href^="#"]').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
@@ -28,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Reveal Elements on Scroll ---
     const reveals = document.querySelectorAll('.reveal');
     const revealOptions = {
         threshold: 0.1,
@@ -46,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
         revealObserver.observe(element);
     });
 
-    // --- Sticky Navigation on Scroll ---
     const nav = document.querySelector('nav');
     const heroSection = document.querySelector('.hero');
     if (nav && heroSection) {
