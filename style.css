@@ -20,7 +20,7 @@
 }
 
 html {
-    scroll-padding-top: 80px; /* Adjusted for nav bar height */
+    scroll-padding-top: 80px;
 }
 
 body {
@@ -107,15 +107,14 @@ nav {
     width: 100%;
     z-index: 1000;
     background: transparent;
-    padding: 20px 0; /* Increased padding slightly */
+    padding: 20px 0;
     transition: background-color 0.4s ease, box-shadow 0.4s ease, border-bottom 0.4s ease;
 }
 
-/* This is the new "Frosted Glass" style for the scrolled navigation */
 nav.scrolled {
-    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    background-color: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px); /* For Safari compatibility */
+    -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -132,7 +131,7 @@ nav.scrolled {
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 40px; /* Increased gap */
+    gap: 40px;
 }
 
 .nav-links a {
@@ -145,7 +144,6 @@ nav.scrolled {
     padding-bottom: 5px;
 }
 
-/* New hover effect for navigation links */
 .nav-links a::after {
     content: '';
     position: absolute;
@@ -187,7 +185,7 @@ nav.scrolled .burger div {
 }
 
 
-/* --- 4. Main Content & Sections (No changes below this line, but included for completeness) --- */
+/* --- 4. Main Content & Sections --- */
 .container {
     max-width: 1100px;
     margin: 0 auto;
@@ -469,15 +467,21 @@ footer {
         right: 0px;
         top: 0px;
         height: 100vh;
-        background-color: var(--dark-bg);
+        /* Updated background with Frosted Glass effect */
+        background-color: rgba(25, 37, 51, 0.8);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-evenly;
-        width: 60%;
+        width: 70%; /* Made it slightly wider */
         transform: translateX(100%);
-        transition: transform 0.5s ease-in;
+        transition: transform 0.5s ease-in-out;
         z-index: 1000;
+    }
+    .nav-links li {
+        opacity: 0; /* Initial state for animation */
     }
     .nav-links.nav-active {
         transform: translateX(0%);
@@ -485,6 +489,7 @@ footer {
 
     .nav-links a {
         color: var(--text-light);
+        font-size: 1.2rem; /* Larger font size for easier tapping */
     }
     .burger {
         display: block;
@@ -492,12 +497,14 @@ footer {
     }
     .toggle .line1 {
         transform: rotate(-45deg) translate(-5px, 6px);
+        background-color: var(--text-light);
     }
     .toggle .line2 {
         opacity: 0;
     }
     .toggle .line3 {
         transform: rotate(45deg) translate(-5px, -6px);
+        background-color: var(--text-light);
     }
     
     .container {
@@ -514,5 +521,17 @@ footer {
     .about-summary h3::after {
         left: 50%;
         transform: translateX(-50%);
+    }
+}
+
+/* This is the missing animation keyframe that makes the links appear */
+@keyframes navLinkFade {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0px);
     }
 }
