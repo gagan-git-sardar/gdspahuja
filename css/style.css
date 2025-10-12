@@ -1,0 +1,44 @@
+/* style.css - kept simple and similar theme */
+:root{
+  --bg:#ffffff;
+  --accent:#0f172a;
+  --muted:#6b7280;
+  --accent-2:#1f2937;
+  --primary:#0b74de;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial; color:var(--accent-2); background:var(--bg); -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.container{max-width:1000px;margin:0 auto;padding:24px}
+.site-header{border-bottom:1px solid #eee;background:#fff;position:sticky;top:0;z-index:40}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+.brand{font-weight:700;text-decoration:none;color:var(--accent-2);font-size:18px}
+.nav a{margin-left:16px;text-decoration:none;color:var(--muted);font-weight:600}
+.hero{padding:60px 0}
+.hero-inner{display:flex;align-items:center;gap:32px}
+.hero-text{flex:1}
+.hero h1{font-size:36px;margin:0 0 8px}
+.tagline{color:var(--muted);margin:0 0 12px;font-weight:600}
+.contact-line{color:var(--muted);margin:0 0 18px}
+.btn{display:inline-block;padding:10px 16px;border-radius:8px;background:var(--primary);color:#fff;text-decoration:none;font-weight:700;margin-right:8px}
+.btn.ghost{background:transparent;border:1px solid #ddd;color:var(--accent-2)}
+
+.hero-photo img{width:220px;height:320px;object-fit:cover;border-radius:8px;box-shadow:0 8px 30px rgba(15,23,42,0.12)}
+
+/* sections */
+.summary{padding:30px 0;border-top:1px solid #f3f4f6}
+.highlights{display:flex;gap:40px;padding:30px 0}
+.highlights .col{flex:1}
+.experience{padding:20px 0;border-top:1px solid #f3f4f6}
+.job{margin-bottom:18px}
+.job h3{margin:6px 0}
+.meta{color:var(--muted);font-weight:600}
+
+.site-footer{border-top:1px solid #eee;padding:20px 0;margin-top:40px;color:var(--muted);text-align:center}
+
+/* responsive */
+@media(max-width:800px){
+  .hero-inner{flex-direction:column-reverse;text-align:center}
+  .hero-photo img{width:200px;height:280px}
+  .nav{display:none}
+  .container{padding:16px}
+}
