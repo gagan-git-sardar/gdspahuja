@@ -1,5 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- 1. Burger Menu Logic ---
+    const burger = document.querySelector('.burger');
+    const nav = document.querySelector('.nav-links');
+    const navLinks = document.querySelectorAll('.nav-links li');
+
+    burger.addEventListener('click', () => {
+        // Toggle Nav
+        nav.classList.toggle('nav-active');
+
+        // Animate Links
+        navLinks.forEach((link, index) => {
+            if (link.style.animation) {
+                link.style.animation = '';
+            } else {
+                link.style.animation = `navLinkFade 0.5s ease forwards ${index / 7 + 0.3}s`;
+            }
+        });
+        
+        // Burger Animation
+        burger.classList.toggle('toggle');
+    });
+
+    // --- 2. Initialize Typed.js ---
     if (document.getElementById('typing-animation')) {
         const typed = new Typed('#typing-animation', {
             strings: [
@@ -16,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- 3. Smooth Scroll ---
     document.querySelectorAll('a[href^="#"]').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
@@ -26,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // New Staggered Animation Logic
+    // --- 4. Staggered Animation on Scroll ---
     const reveals = document.querySelectorAll('.reveal');
     const revealObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
@@ -41,24 +65,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     reveals.forEach((element, index) => {
-        // This line adds the stagger delay
         element.style.transitionDelay = `${index * 100}ms`;
         revealObserver.observe(element);
     });
 
-
-    const nav = document.querySelector('nav');
+    // --- 5. Sticky Navigation on Scroll ---
+    const navBar = document.querySelector('nav');
     const heroSection = document.querySelector('.hero');
-    if (nav && heroSection) {
+    if (navBar && heroSection) {
         const navOptions = {
             rootMargin: `-${heroSection.offsetHeight - 70}px 0px 0px 0px`
         };
         const navObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (!entry.isIntersecting) {
-                    nav.classList.add('scrolled');
+                    navBar.classList.add('scrolled');
                 } else {
-                    nav.classList.remove('scrolled');
+                    navBar.classList.remove('scrolled');
                 }
             });
         }, navOptions);
