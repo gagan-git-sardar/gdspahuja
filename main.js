@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 3. Smooth Scroll ---
-    document.querySelectorAll('a[href^="#"]').forEach(link => {
+    // --- 3. Smooth Scroll & Close Menu ---
+    document.querySelectorAll('.nav-links a').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- 4. Staggered Animation on Scroll (FIXED) ---
+    // --- 4. Staggered Animation on Scroll ---
     const reveals = document.querySelectorAll('.reveal');
     const revealObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
@@ -60,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     reveals.forEach(element => {
-        // REMOVED the buggy stagger logic from here
         revealObserver.observe(element);
     });
 
