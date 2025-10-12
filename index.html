@@ -15,7 +15,7 @@
     <header class="hero">
         <div class="hero-content">
             <h1 class="reveal">Gagandeep Singh Pahuja</h1>
-            <p class="reveal">MS in MOT Student at NYU | Content & Communications Strategist</p>
+            <p class="reveal tagline">I'm a <span id="typing-animation"></span></p>
             <a href="#about" class="btn reveal">Discover My Work</a>
         </div>
         <a href="#about" class="scroll-down-link">
@@ -29,8 +29,7 @@
             <ul>
                 <li><a href="#about">About</a></li>
                 <li><a href="#experience">Experience</a></li>
-                <li><a href="#education">Education</a></li>
-                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </div>
@@ -39,54 +38,78 @@
     <main>
         <section id="about" class="container">
             <h2 class="section-title reveal">About Me</h2>
-            <p class="reveal">An aspiring content strategist with a strong background in technology and a passion for digital transformation. My experience has equipped me to translate complex technical concepts into clear, impactful content. As I pursue my Master's at NYU, I am focused on blending technical expertise with communication and leadership to create valuable content that solves real-world problems.</p>
+            <div class="about-container reveal">
+                <div class="about-image">
+                    <img src="https://via.placeholder.com/400" alt="Gagandeep Singh Pahuja">
+                </div>
+                <div class="about-content">
+                    <h3>Blending Technology with Storytelling</h3>
+                    <p>I’m a Management of Technology student at NYU with a deep passion for systems thinking, storytelling, and innovation. My journey blends engineering precision with creative communication, allowing me to bridge the gap between complex technical concepts and clear, impactful content.</p>
+                    <p>Whether it's managing a product roadmap or visualizing data, I thrive on turning ideas into tangible results that solve real-world problems.</p>
+                </div>
+            </div>
         </section>
 
         <section id="experience" class="container">
             <h2 class="section-title reveal">Experience</h2>
             <div class="card-grid">
                 <div class="card reveal">
-                    <h3>Assistant Product Manager</h3>
+                    <h3><i class="fas fa-briefcase card-icon"></i>Assistant Product Manager</h3>
                     <p class="company">Foxbiz Software Pvt. Ltd.</p>
                     <p class="date">Jan 2025 - Aug 2025</p>
-                    <p>Supported the development of a modular business management platform, collaborating across teams to define feature requirements and streamline rollouts.</p>
                 </div>
                 <div class="card reveal">
-                    <h3>DevOps Engineer</h3>
+                    <h3><i class="fas fa-briefcase card-icon"></i>Content Strategist</h3>
+                    <p class="company">NYU Projects</p>
+                    <p class="date">Ongoing</p>
+                </div>
+                <div class="card reveal">
+                    <h3><i class="fas fa-briefcase card-icon"></i>Former System Engineer</h3>
                     <p class="company">Tata Consultancy Services</p>
                     <p class="date">Jul 2022 - Jan 2025</p>
-                    <p>Automated cloud infrastructure and optimized CI/CD pipelines using GCP and AWS, and spearheaded cross-team collaboration to resolve critical system issues.</p>
                 </div>
             </div>
         </section>
 
-        <section id="education" class="container">
-            <h2 class="section-title reveal">Education</h2>
-            <div class="card-grid">
-                <div class="card reveal">
-                    <h3>Master of Science, Management of Technology</h3>
-                    <p class="institution">New York University</p>
-                    <p class="date">Expected Aug 2025</p>
+        <section id="projects" class="container">
+            <h2 class="section-title reveal">My Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card reveal">
+                    <img src="https://via.placeholder.com/400x300" alt="Project Thumbnail">
+                    <div class="project-info">
+                        <h3>Mahamaya Food Delivery App</h3>
+                        <p>A concept app for food delivery in Ratanpur, focusing on local vendors.</p>
+                        <div class="project-links">
+                            <a href="#" class="btn-project">View Live</a>
+                            <a href="#" class="btn-project">View Code</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="card reveal">
-                    <h3>Bachelor of Technology, Computer Science</h3>
-                    <p class="institution">Chhattisgarh Swami Vivekanand Technical University</p>
-                    <p class="date">2018 – 2022</p>
+                <div class="project-card reveal">
+                    <img src="https://via.placeholder.com/400x300" alt="Project Thumbnail">
+                    <div class="project-info">
+                        <h3>London Crime Data Visualization</h3>
+                        <p>An interactive dashboard visualizing crime statistics across London boroughs.</p>
+                        <div class="project-links">
+                            <a href="#" class="btn-project">View Live</a>
+                            <a href="#" class="btn-project">View Code</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card reveal">
+                    <img src="https://via.placeholder.com/400x300" alt="Project Thumbnail">
+                    <div class="project-info">
+                        <h3>Digital NYU MOT Planner</h3>
+                        <p>A task management tool tailored for Management of Technology students at NYU.</p>
+                        <div class="project-links">
+                            <a href="#" class="btn-project">View Live</a>
+                            <a href="#" class="btn-project">View Code</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
         
-        <section id="skills" class="container">
-             <h2 class="section-title reveal">Top Skills</h2>
-             <div class="skills-list reveal">
-                 <span>Strategic Communications</span>
-                 <span>Project Management</span>
-                 <span>Leadership & Collaboration</span>
-                 <span>Technical Writing</span>
-                 <span>Product Strategy</span>
-             </div>
-        </section>
-
         <section id="contact" class="container">
             <h2 class="section-title reveal">Get In Touch</h2>
             <form action="https://formspree.io/f/xnnggebg" method="POST" class="reveal">
@@ -102,6 +125,7 @@
         <p>&copy; 2025 Gagandeep Singh Pahuja. Designed with passion.</p>
     </footer>
 
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
