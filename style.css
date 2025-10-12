@@ -1,229 +1,296 @@
-/* --- Global Styles & Variables --- */
+/* --- 1. Variables & Global Reset --- */
 :root {
-    --sidebar-bg: #1a222f;
-    --main-bg: #f8f9fa;
-    --card-bg: #ffffff;
-    --primary-text: #212529;
-    --secondary-text: #6c757d;
-    --sidebar-text: #e9ecef;
-    --accent-color: #007bff;
-    --accent-hover: #0056b3;
-    --border-color: #dee2e6;
+    --primary-color: #3B82F6; /* A nice, modern blue */
+    --primary-hover: #2563EB;
+    --dark-bg: #111827;
+    --light-bg: #F9FAFB;
+    --text-dark: #1F2937;
+    --text-light: #F9FAFB;
+    --text-muted: #6B7280;
+    --border-color: #E5E7EB;
+    --sans-font: 'Poppins', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-padding-top: 70px; /* Offset for sticky nav */
 }
 
 body {
-    font-family: 'Lato', sans-serif;
-    background-color: var(--main-bg);
-    color: var(--primary-text);
-    margin: 0;
+    font-family: var(--sans-font);
+    background-color: var(--light-bg);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* --- 2. Hero Section --- */
+.hero {
+    height: 100vh;
+    background: url('https://images.unsplash.com/photo-1550439062-609e1531270e?q=80&w=2070') center/cover no-repeat;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-light);
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.7); /* Dark overlay */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
     padding: 20px;
-    line-height: 1.7;
 }
 
-.container {
+.hero h1 {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 700;
+    margin-bottom: 0.5em;
+}
+
+.hero p {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    color: rgba(249, 250, 251, 0.8);
+    margin-bottom: 1.5em;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-3px);
+}
+
+/* --- 3. Navigation --- */
+nav {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background: transparent;
+    padding: 15px 0;
+    transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+nav.scrolled {
+    background-color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
     display: flex;
-    flex-wrap: wrap;
-    max-width: 1400px;
-    margin: 20px auto;
-    background: var(--card-bg);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-h1, h2, h3 {
-    font-family: 'Montserrat', sans-serif;
-    color: var(--primary-text);
-    margin-top: 0;
-}
-
-/* --- Sidebar (Left Column) --- */
-.sidebar {
-    background-color: var(--sidebar-bg);
-    color: var(--sidebar-text);
-    padding: 40px;
-    flex: 1;
-    min-width: 320px;
-}
-
-.sidebar h1 {
-    color: #fff;
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-}
-
-.sidebar .tagline {
-    font-size: 1.1rem;
-    color: var(--accent-color);
-    margin-bottom: 30px;
-    font-weight: bold;
-}
-
-.sidebar .contact-info p {
-    margin: 10px 0;
-    display: flex;
+    justify-content: space-between;
     align-items: center;
 }
 
-.sidebar .icon {
-    color: var(--accent-color);
-    margin-right: 15px;
-    width: 20px;
-}
-
-.sidebar .skills h2 {
-    color: #fff;
-    border-bottom: 2px solid var(--accent-color);
-    padding-bottom: 10px;
-    margin-top: 40px;
-}
-
-.sidebar .skills ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.sidebar .skills li {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 8px 12px;
-    margin: 8px 0;
-    border-radius: 5px;
-}
-
-.sidebar .links {
-    margin-top: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.sidebar .btn {
-    display: block;
-    background-color: var(--accent-color);
-    color: #fff;
-    text-align: center;
-    padding: 12px;
+.nav-logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary-color);
     text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
 }
 
-.sidebar .btn:hover {
-    background-color: var(--accent-hover);
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
 }
 
-.sidebar .btn i {
-    margin-right: 8px;
+nav a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    transition: color 0.3s ease;
 }
 
-/* --- Main Content (Right Column) --- */
-.main-content {
-    padding: 40px;
-    flex: 2;
-    min-width: 300px;
+nav.scrolled a {
+    color: var(--text-dark);
 }
 
-.main-content section {
-    margin-bottom: 40px;
+nav a:hover, nav.scrolled a:hover {
+    color: var(--primary-color);
 }
 
-.main-content h2 {
-    font-size: 2rem;
-    color: var(--primary-text);
-    border-bottom: 3px solid var(--accent-color);
-    padding-bottom: 10px;
-    margin-bottom: 30px;
+/* --- 4. Main Content & Sections --- */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 80px 20px;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background-color: var(--primary-color);
+    border-radius: 2px;
+}
+
+/* Card Layout */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
 }
 
 .card {
-    background: var(--card-bg);
-    padding: 25px;
-    border-left: 5px solid var(--accent-color);
-    margin-bottom: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    border-radius: 0 8px 8px 0;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
 .card h3 {
-    font-size: 1.4rem;
-    margin-bottom: 5px;
+    color: var(--primary-color);
+    margin-bottom: 0.5em;
 }
-
 .card .company, .card .institution {
-    font-weight: bold;
-    color: var(--secondary-text);
-    margin-bottom: 5px;
+    font-weight: 600;
+    margin-bottom: 0.25em;
 }
-
 .card .date {
-    color: var(--secondary-text);
-    font-style: italic;
-    margin-bottom: 15px;
+    color: var(--text-muted);
+    font-size: 0.9em;
+    margin-bottom: 1em;
 }
 
-.card ul {
-    padding-left: 20px;
-    margin: 0;
+/* Skills Section */
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+.skills-list span {
+    background-color: #E0E7FF;
+    color: #3730A3;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 600;
 }
 
-/* --- Contact Form Styles --- */
+/* Contact Form */
 #contact form {
     display: grid;
     gap: 20px;
+    max-width: 700px;
+    margin: 0 auto;
 }
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-#contact label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: var(--secondary-text);
-}
-
-#contact input,
-#contact textarea {
-    padding: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    font-family: 'Lato', sans-serif;
-    font-size: 1rem;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-#contact input:focus,
-#contact textarea:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
-}
-
-.btn-submit {
-    background-color: var(--accent-color);
-    color: #fff;
-    padding: 15px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+#contact input, #contact textarea {
     width: 100%;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: var(--sans-font);
+    font-size: 1rem;
+}
+#contact input:focus, #contact textarea:focus {
+    outline: 2px solid var(--primary-color);
+    border-color: transparent;
+}
+#contact button {
+    border: none;
+    cursor: pointer;
 }
 
-.btn-submit:hover {
-    background-color: var(--accent-hover);
+/* --- 5. Footer --- */
+footer {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--dark-bg);
+    color: var(--text-muted);
+}
+
+/* --- 6. Animations --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scroll down indicator */
+.scroll-down-link {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+.scroll-down {
+    width: 24px;
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 12px;
+    position: relative;
+}
+.scroll-down::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 8px;
+    background: white;
+    border-radius: 2px;
+    animation: scroll-anim 2s infinite;
+}
+@keyframes scroll-anim {
+    0% { transform: translate(-50%, 0); opacity: 1; }
+    50% { transform: translate(-50%, 10px); opacity: 0; }
+    100% { transform: translate(-50%, 0); opacity: 1; }
 }
 
 
-/* --- Responsive Design --- */
-@media (max-width: 900px) {
-    .container {
-        flex-direction: column;
-    }
-    .sidebar, .main-content {
-        min-width: 100%;
+/* --- 7. Responsive Design --- */
+@media (max-width: 768px) {
+    nav ul {
+        display: none; /* Simple hide on mobile, can be replaced with a burger menu */
     }
 }
