@@ -448,9 +448,7 @@ footer {
         right: 0px;
         top: 0px;
         height: 100vh;
-        /* UPDATED: Solid background color */
-        background-color: var(--dark-bg);
-        /* REMOVED: backdrop-filter */
+        background-color: var(--dark-bg); /* SOLID background color */
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -462,20 +460,33 @@ footer {
     }
     .nav-links li {
         opacity: 0;
+        transform: translateX(50px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
     }
     .nav-links.nav-active {
         transform: translateX(0%);
     }
+    /* New animation logic starts here */
+    .nav-links.nav-active li {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+    .nav-links.nav-active li:nth-child(1) { transition-delay: 0.2s; }
+    .nav-links.nav-active li:nth-child(2) { transition-delay: 0.3s; }
+    .nav-links.nav-active li:nth-child(3) { transition-delay: 0.4s; }
+    .nav-links.nav-active li:nth-child(4) { transition-delay: 0.5s; }
+    /* End new animation logic */
+
     .nav-links a {
         color: var(--text-light);
         font-size: 1.2rem;
     }
     .burger {
         display: block;
-        z-index: 1002; /* Burger always on top */
+        z-index: 1002;
     }
     .burger.toggle {
-        position: fixed; /* Lock position when menu is open */
+        position: fixed;
         right: 20px;
         top: 20px;
     }
@@ -502,16 +513,5 @@ footer {
     .about-summary h3::after {
         left: 50%;
         transform: translateX(-50%);
-    }
-}
-
-@keyframes navLinkFade {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0px);
     }
 }
