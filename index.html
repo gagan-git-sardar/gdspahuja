@@ -5,107 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gagandeep Singh Pahuja | Portfolio</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 </head>
 <body>
 
-    <div class="container">
-        <aside class="sidebar">
-            <div class="sidebar-content">
-                <h1>Gagandeep Singh Pahuja</h1>
-                <p class="tagline">MS in MOT Student at NYU | Content & Communications Strategist</p>
+    <header class="hero">
+        <div class="hero-content">
+            <h1 class="reveal">Gagandeep Singh Pahuja</h1>
+            <p class="reveal">MS in MOT Student at NYU | Content & Communications Strategist</p>
+            <a href="#about" class="btn reveal">Discover My Work</a>
+        </div>
+        <a href="#about" class="scroll-down-link">
+            <div class="scroll-down"></div>
+        </a>
+    </header>
 
-                <div class="contact-info">
-                    <p><i class="fas fa-phone icon"></i> +44 7799 228467</p>
-                    <p><i class="fas fa-envelope icon"></i> gdspahuja@gmail.com</p>
-                    <p><i class="fas fa-map-marker-alt icon"></i> United Kingdom</p>
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="nav-logo">GSP</a>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section id="about" class="container">
+            <h2 class="section-title reveal">About Me</h2>
+            <p class="reveal">An aspiring content strategist with a strong background in technology and a passion for digital transformation. My experience has equipped me to translate complex technical concepts into clear, impactful content. As I pursue my Master's at NYU, I am focused on blending technical expertise with communication and leadership to create valuable content that solves real-world problems.</p>
+        </section>
+
+        <section id="experience" class="container">
+            <h2 class="section-title reveal">Experience</h2>
+            <div class="card-grid">
+                <div class="card reveal">
+                    <h3>Assistant Product Manager</h3>
+                    <p class="company">Foxbiz Software Pvt. Ltd.</p>
+                    <p class="date">Jan 2025 - Aug 2025</p>
+                    <p>Supported the development of a modular business management platform, collaborating across teams to define feature requirements and streamline rollouts.</p>
                 </div>
-
-                <div class="skills">
-                    <h2>Top Skills</h2>
-                    <ul>
-                        <li>Strategic Communications</li>
-                        <li>Project Management</li>
-                        <li>Leadership & Collaboration</li>
-                        <li>Technical Writing</li>
-                        <li>Product Strategy</li>
-                    </ul>
-                </div>
-
-                <div class="links">
-                    <a href="https://www.linkedin.com/in/gagandeep-singh-pahuja-3210ba158" target="_blank" class="btn">
-                        <i class="fab fa-linkedin"></i> LinkedIn
-                    </a>
-                    <a href="https://github.com/gagan-git-sardar" target="_blank" class="btn">
-                        <i class="fab fa-github"></i> GitHub
-                    </a>
+                <div class="card reveal">
+                    <h3>DevOps Engineer</h3>
+                    <p class="company">Tata Consultancy Services</p>
+                    <p class="date">Jul 2022 - Jan 2025</p>
+                    <p>Automated cloud infrastructure and optimized CI/CD pipelines using GCP and AWS, and spearheaded cross-team collaboration to resolve critical system issues.</p>
                 </div>
             </div>
-        </aside>
+        </section>
 
-        <main class="main-content">
-            <section id="summary">
-                <h2>Professional Summary</h2>
-                <p>An aspiring content strategist with a strong background in technology and a passion for digital transformation. My experience at companies like TCS and Foxbiz has equipped me to translate complex technical concepts into clear, impactful content. As I pursue my Master's at NYU, I am focused on blending technical expertise with communication and leadership to create valuable content that solves real-world problems. I am a collaborative professional dedicated to building, learning, and growing.</p>
-            </section>
-
-            <section id="experience">
-                <h2>Experience</h2>
-                <div class="card">
-                    <h3>Assistant Product Manager</h3>
-                    <p class="company">Foxbiz Software Pvt. Ltd. | Bengaluru, India</p>
-                    <p class="date">January 2025 - August 2025</p>
-                    <ul>
-                        <li>Supported the development of a modular business management platform, collaborating with product and development teams to define feature requirements and streamline feature rollouts.</li>
-                        <li>Engaged in user experience testing and feedback cycles to improve workflows and align product direction with business goals.</li>
-                    </ul>
-                </div>
-                <div class="card">
-                    <h3>DevOps Engineer</h3>
-                    <p class="company">Tata Consultancy Services | Pune, India</p>
-                    <p class="date">July 2022 - January 2025</p>
-                    <ul>
-                        <li>Automated cloud infrastructure and optimized CI/CD pipelines, leveraging Google Cloud Platform (GCP) and AWS.</li>
-                        <li>Acted as a key communicator, spearheading cross-team collaboration to efficiently troubleshoot and resolve critical system issues.</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="education">
-                <h2>Education</h2>
-                <div class="card">
+        <section id="education" class="container">
+            <h2 class="section-title reveal">Education</h2>
+            <div class="card-grid">
+                <div class="card reveal">
                     <h3>Master of Science, Management of Technology</h3>
-                    <p class="institution">New York University | London, UK & New York, NY</p>
-                    <p class="date">Expected August 2025</p>
+                    <p class="institution">New York University</p>
+                    <p class="date">Expected Aug 2025</p>
                 </div>
-                 <div class="card">
+                <div class="card reveal">
                     <h3>Bachelor of Technology, Computer Science</h3>
                     <p class="institution">Chhattisgarh Swami Vivekanand Technical University</p>
-                    <p class="date">August 2018 – July 2022</p>
+                    <p class="date">2018 – 2022</p>
                 </div>
-            </section>
-            
-            <section id="contact">
-                <h2>Contact Me</h2>
-                <form action="https://formspree.io/f/xnnggebg" method="POST">
-                    <div class="form-group">
-                        <label for="name">Your Name</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Your Email</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Message</label>
-                        <textarea id="message" name="message" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="btn-submit">Send Message</button>
-                </form>
-            </section>
-        </main>
-    </div>
+            </div>
+        </section>
+        
+        <section id="skills" class="container">
+             <h2 class="section-title reveal">Top Skills</h2>
+             <div class="skills-list reveal">
+                 <span>Strategic Communications</span>
+                 <span>Project Management</span>
+                 <span>Leadership & Collaboration</span>
+                 <span>Technical Writing</span>
+                 <span>Product Strategy</span>
+             </div>
+        </section>
 
+        <section id="contact" class="container">
+            <h2 class="section-title reveal">Get In Touch</h2>
+            <form action="https://formspree.io/f/xnnggebg" method="POST" class="reveal">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Gagandeep Singh Pahuja. Designed with passion.</p>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
