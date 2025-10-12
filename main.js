@@ -6,11 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.querySelector('body');
 
     burger.addEventListener('click', () => {
-        // Toggle Nav
         navLinks.classList.toggle('nav-active');
-        // Toggle body class to prevent scrolling
         body.classList.toggle('nav-open');
-        // Burger Animation
         burger.classList.toggle('toggle');
     });
 
@@ -37,12 +34,18 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
+                // Close mobile menu if it's open before scrolling
+                if (navLinks.classList.contains('nav-active')) {
+                    navLinks.classList.remove('nav-active');
+                    body.classList.remove('nav-open');
+                    burger.classList.remove('toggle');
+                }
                 target.scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
 
-    // --- 4. Staggered Animation on Scroll ---
+    // --- 4. Staggered Animation on Scroll (FIXED) ---
     const reveals = document.querySelectorAll('.reveal');
     const revealObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
@@ -56,8 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
         rootMargin: "0px 0px -50px 0px"
     });
 
-    reveals.forEach((element, index) => {
-        element.style.transitionDelay = `${index * 100}ms`;
+    reveals.forEach(element => {
+        // REMOVED the buggy stagger logic from here
         revealObserver.observe(element);
     });
 
