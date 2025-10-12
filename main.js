@@ -26,11 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // New Staggered Animation Logic
     const reveals = document.querySelectorAll('.reveal');
-    const revealOptions = {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px"
-    };
     const revealObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -38,10 +35,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 observer.unobserve(entry.target);
             }
         });
-    }, revealOptions);
-    reveals.forEach(element => {
+    }, {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
+    });
+
+    reveals.forEach((element, index) => {
+        // This line adds the stagger delay
+        element.style.transitionDelay = `${index * 100}ms`;
         revealObserver.observe(element);
     });
+
 
     const nav = document.querySelector('nav');
     const heroSection = document.querySelector('.hero');
