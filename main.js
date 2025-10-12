@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     if (document.getElementById('typing-animation')) {
-        new Typed('#typing-animation', {
+        const typed = new Typed('#typing-animation', {
             strings: [
                 'Content & Communications Strategist.',
                 'Management of Technology Student.',
