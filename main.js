@@ -3,13 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('typing-animation')) {
         const typed = new Typed('#typing-animation', {
             strings: [
-                'Content & Communications Strategist.',
-                'Management of Technology Student.',
-                'DevOps & Cloud Enthusiast.',
-                'Storyteller.'
+                'Project Manager.',
+                'Technology Strategist.',
+                'Innovative Leader.',
+                'Problem Solver.'
             ],
             typeSpeed: 50,
-            backSpeed: 25,
+            backSpeed: 30,
             backDelay: 2000,
             loop: true,
             smartBackspace: true,
