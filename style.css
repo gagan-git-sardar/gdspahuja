@@ -39,28 +39,18 @@ body {
     justify-content: center;
     text-align: center;
     color: var(--text-light);
-    overflow: hidden;
+    /* New Animated Gradient Background */
+    background: linear-gradient(45deg, #1f2937, #111827, #0d9488);
+    background-size: 400% 400%;
+    animation: gradient-flow 15s ease infinite;
 }
 
-.hero-video {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    z-index: -1;
+@keyframes gradient-flow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-.hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0.6));
-    z-index: 0;
-}
 
 .hero-content {
     position: relative;
@@ -262,6 +252,8 @@ nav a:hover, nav.scrolled a:hover {
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     border: 1px solid var(--border-color);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .card:hover {
@@ -288,6 +280,13 @@ nav a:hover, nav.scrolled a:hover {
 .card .date {
     color: var(--text-muted);
     font-size: 0.9em;
+    margin-bottom: 1em;
+}
+
+.card .description {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    flex-grow: 1;
 }
 
 /* Projects Section */
@@ -386,15 +385,44 @@ footer {
   transform: translateY(30px);
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
-
 .revealed {
   opacity: 1;
   transform: translateY(0);
 }
 
-.scroll-down-link { /* ... */ }
-.scroll-down { /* ... */ }
-@keyframes scroll-anim { /* ... */ }
+/* Scroll down indicator */
+.scroll-down-link {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+.scroll-down {
+    width: 24px;
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 12px;
+    position: relative;
+}
+.scroll-down::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 8px;
+    background: white;
+    border-radius: 2px;
+    animation: scroll-anim 2s infinite;
+}
+@keyframes scroll-anim {
+    0% { transform: translate(-50%, 0); opacity: 1; }
+    50% { transform: translate(-50%, 10px); opacity: 0; }
+    100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
 
 /* --- 6. Responsive Design --- */
 @media (max-width: 768px) {
