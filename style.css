@@ -29,6 +29,10 @@ body {
     color: var(--text-dark);
     line-height: 1.6;
 }
+/* New style to prevent scrolling when menu is open */
+body.nav-open {
+    overflow: hidden;
+}
 
 /* --- 2. Hero Section --- */
 .hero {
@@ -274,15 +278,14 @@ nav.scrolled .burger div {
     transform: translateX(0);
 }
 
-/* Card Layout */
-.card-grid {
+/* Card Layout & Projects Section */
+.card-grid, .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 30px;
 }
-.card {
+.card, .project-card {
     background: var(--card-bg);
-    padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     border: 1px solid var(--border-color);
@@ -290,9 +293,12 @@ nav.scrolled .burger div {
     display: flex;
     flex-direction: column;
 }
-.card:hover {
+.card:hover, .project-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+.card {
+    padding: 30px;
 }
 .card h3 {
     color: var(--primary-color);
@@ -303,7 +309,7 @@ nav.scrolled .burger div {
 .card .card-icon {
     margin-right: 12px;
 }
-.card .company, .card .institution {
+.card .company {
     font-weight: 600;
     margin-bottom: 0.25em;
 }
@@ -317,26 +323,8 @@ nav.scrolled .burger div {
     color: var(--text-muted);
     flex-grow: 1;
 }
-
-/* Projects Section */
-.projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-}
 .project-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
     padding: 30px;
-    border: 1px solid var(--border-color);
-}
-.project-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 .project-info {
     flex-grow: 1;
@@ -398,7 +386,6 @@ footer {
     background: var(--dark-bg);
     color: var(--text-muted);
 }
-
 .reveal {
   opacity: 0;
   transform: translateY(30px);
@@ -408,8 +395,6 @@ footer {
   opacity: 1;
   transform: translateY(0);
 }
-
-/* Scroll down indicator */
 .scroll-down-link {
     position: absolute;
     bottom: 20px;
@@ -442,7 +427,6 @@ footer {
     100% { transform: translate(-50%, 0); opacity: 1; }
 }
 
-
 /* --- 6. Responsive Design --- */
 @media (max-width: 900px) {
     .about-grid {
@@ -454,46 +438,48 @@ footer {
     body {
         overflow-x: hidden;
     }
-    
     .hero h1 { font-size: 2.2rem; }
     .hero .tagline { font-size: 1rem; }
-
     .nav-container {
         justify-content: flex-end;
     }
-    
     .nav-links {
         position: fixed;
         right: 0px;
         top: 0px;
         height: 100vh;
-        /* Updated background with Frosted Glass effect */
-        background-color: rgba(25, 37, 51, 0.8);
+        /* Updated background with Frosted Glass effect and more opacity */
+        background-color: rgba(25, 37, 51, 0.9);
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-evenly;
-        width: 70%; /* Made it slightly wider */
+        width: 70%;
         transform: translateX(100%);
         transition: transform 0.5s ease-in-out;
-        z-index: 1000;
+        z-index: 1001; /* Higher z-index */
     }
     .nav-links li {
-        opacity: 0; /* Initial state for animation */
+        opacity: 0;
     }
     .nav-links.nav-active {
         transform: translateX(0%);
     }
-
     .nav-links a {
         color: var(--text-light);
-        font-size: 1.2rem; /* Larger font size for easier tapping */
+        font-size: 1.2rem;
     }
     .burger {
         display: block;
-        z-index: 1001;
+        z-index: 1002; /* Burger must always be on top */
+    }
+    /* Fixed position for the burger when menu is open */
+    .burger.toggle {
+        position: fixed;
+        right: 20px;
+        top: 20px;
     }
     .toggle .line1 {
         transform: rotate(-45deg) translate(-5px, 6px);
@@ -506,15 +492,12 @@ footer {
         transform: rotate(45deg) translate(-5px, -6px);
         background-color: var(--text-light);
     }
-    
     .container {
         padding: 60px 20px;
     }
-
     .section-title {
         font-size: 2.2rem;
     }
-
     .about-summary h3 {
         text-align: center;
     }
@@ -524,7 +507,6 @@ footer {
     }
 }
 
-/* This is the missing animation keyframe that makes the links appear */
 @keyframes navLinkFade {
     from {
         opacity: 0;
