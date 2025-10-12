@@ -4,6 +4,7 @@
     --primary-hover: #2563EB;
     --dark-bg: #111827;
     --light-bg: #F9FAFB;
+    --card-bg: #FFFFFF;
     --text-dark: #1F2937;
     --text-light: #F9FAFB;
     --text-muted: #6B7280;
@@ -44,7 +45,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(17, 24, 39, 0.7); /* Dark overlay */
+    background: linear-gradient(to top, rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0.6));
 }
 
 .hero-content {
@@ -59,10 +60,14 @@ body {
     margin-bottom: 0.5em;
 }
 
-.hero p {
+.hero .tagline {
     font-size: clamp(1.1rem, 2.5vw, 1.5rem);
     color: rgba(249, 250, 251, 0.8);
     margin-bottom: 1.5em;
+}
+
+.typed-cursor {
+    color: var(--primary-color);
 }
 
 .btn {
@@ -93,7 +98,8 @@ nav {
 }
 
 nav.scrolled {
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
@@ -121,7 +127,7 @@ nav ul {
 
 nav a {
     text-decoration: none;
-    color: var(--text-muted);
+    color: var(--text-light);
     font-weight: 600;
     transition: color 0.3s ease;
 }
@@ -136,29 +142,55 @@ nav a:hover, nav.scrolled a:hover {
 
 /* --- 4. Main Content & Sections --- */
 .container {
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 80px 20px;
+    padding: 100px 20px;
 }
 
 .section-title {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     font-weight: 700;
     text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: 60px;
     position: relative;
 }
 
 .section-title::after {
     content: '';
     position: absolute;
-    bottom: -10px;
+    bottom: -15px;
     left: 50%;
     transform: translateX(-50%);
-    width: 60px;
+    width: 70px;
     height: 4px;
     background-color: var(--primary-color);
     border-radius: 2px;
+}
+
+/* About Section */
+.about-container {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+.about-image {
+    flex: 1;
+    min-width: 280px;
+}
+.about-image img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.about-content {
+    flex: 1.5;
+    min-width: 300px;
+}
+.about-content h3 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
 }
 
 /* Card Layout */
@@ -167,24 +199,26 @@ nav a:hover, nav.scrolled a:hover {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 30px;
 }
-
 .card {
-    background: white;
+    background: var(--card-bg);
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     border: 1px solid var(--border-color);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
-
 .card h3 {
     color: var(--primary-color);
     margin-bottom: 0.5em;
+    display: flex;
+    align-items: center;
+}
+.card .card-icon {
+    margin-right: 12px;
 }
 .card .company, .card .institution {
     font-weight: 600;
@@ -196,19 +230,59 @@ nav a:hover, nav.scrolled a:hover {
     margin-bottom: 1em;
 }
 
-/* Skills Section */
-.skills-list {
+/* Projects Section */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+.project-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+.project-card img {
+    width: 100%;
+    display: block;
+}
+.project-info {
+    padding: 25px;
+}
+.project-info h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5em;
+}
+.project-links {
+    margin-top: 20px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
     gap: 15px;
 }
-.skills-list span {
-    background-color: #E0E7FF;
-    color: #3730A3;
-    padding: 10px 20px;
-    border-radius: 20px;
+.btn-project {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    text-decoration: none;
+    border-radius: 8px;
     font-weight: 600;
+    transition: all 0.3s ease;
+}
+.btn-project:first-child {
+    background: var(--primary-color);
+    color: var(--text-light);
+}
+.btn-project:last-child {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+.btn-project:hover {
+    transform: scale(1.05);
 }
 
 /* Contact Form */
@@ -235,7 +309,7 @@ nav a:hover, nav.scrolled a:hover {
     cursor: pointer;
 }
 
-/* --- 5. Footer --- */
+/* --- 5. Footer & Animations --- */
 footer {
     text-align: center;
     padding: 40px 20px;
@@ -243,7 +317,6 @@ footer {
     color: var(--text-muted);
 }
 
-/* --- 6. Animations --- */
 .reveal {
   opacity: 0;
   transform: translateY(30px);
@@ -254,43 +327,16 @@ footer {
   transform: translateY(0);
 }
 
-/* Scroll down indicator */
-.scroll-down-link {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-}
-.scroll-down {
-    width: 24px;
-    height: 40px;
-    border: 2px solid white;
-    border-radius: 12px;
-    position: relative;
-}
-.scroll-down::before {
-    content: '';
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 8px;
-    background: white;
-    border-radius: 2px;
-    animation: scroll-anim 2s infinite;
-}
-@keyframes scroll-anim {
-    0% { transform: translate(-50%, 0); opacity: 1; }
-    50% { transform: translate(-50%, 10px); opacity: 0; }
-    100% { transform: translate(-50%, 0); opacity: 1; }
-}
+.scroll-down-link { /* ... */ }
+.scroll-down { /* ... */ }
+@keyframes scroll-anim { /* ... */ }
 
-
-/* --- 7. Responsive Design --- */
+/* --- 6. Responsive Design --- */
 @media (max-width: 768px) {
     nav ul {
-        display: none; /* Simple hide on mobile, can be replaced with a burger menu */
+        display: none;
+    }
+    .about-container {
+        text-align: center;
     }
 }
