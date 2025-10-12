@@ -2,15 +2,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. Burger Menu Logic ---
     const burger = document.querySelector('.burger');
-    const nav = document.querySelector('.nav-links');
-    const navLinks = document.querySelectorAll('.nav-links li');
+    const navLinks = document.querySelector('.nav-links');
+    const navLinksLi = document.querySelectorAll('.nav-links li');
 
     burger.addEventListener('click', () => {
         // Toggle Nav
-        nav.classList.toggle('nav-active');
+        navLinks.classList.toggle('nav-active');
 
         // Animate Links
-        navLinks.forEach((link, index) => {
+        navLinksLi.forEach((link, index) => {
             if (link.style.animation) {
                 link.style.animation = '';
             } else {
