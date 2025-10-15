@@ -108,8 +108,22 @@
         </section>
         
         <section id="contact" class="container">
-            <h2 class="section-title reveal">Let's Collaborate</h2>
+            <h2 class="section-title reveal">Let's Build Something Great</h2>
+            <p class="contact-subtitle reveal">
+                Whether you're hiring for a new role, seeking a mentor, or have a revolutionary startup idea, I'm ready to listen. Select an option below to get started!
+            </p>
             <form action="https://formspree.io/f/xnnggebg" method="POST" class="reveal">
+                
+                <div class="form-group">
+                    <label for="interest">I'm interested in...</label>
+                    <select id="interest" name="interest" required>
+                        <option value="" disabled selected>Please select an option</option>
+                        <option value="hiring">Hiring you for a role</option>
+                        <option value="mentorship">Seeking mentorship</option>
+                        <option value="cofounder">Pitching a startup idea</option>
+                    </select>
+                </div>
+
                 <input type="text" name="name" placeholder="Your Name" required>
                 <input type="email" name="email" placeholder="Your Email" required>
                 <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
