@@ -1,26 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Portfolio of Gagandeep Singh Pahuja, an aspiring Project Manager and Technology Strategist bridging the gap between engineering and business.">
+    <meta property="og:title" content="Gagandeep Singh Pahuja | Project Manager">
+    <meta property="og:description"
+        content="Aspiring Project Manager & Technology Strategist. Explore my projects and experience.">
+    <meta property="og:image" content="assets/images/profile.png">
+    <meta property="og:type" content="website">
     <title>Gagandeep Singh Pahuja | Project Manager</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 </head>
+
 <body>
+    <!-- Global Background -->
+    <div class="global-overlay"></div>
+    <video playsinline autoplay muted loop class="global-video-bg">
+        <source src="assets/videos/hero-background.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Gagan.</a>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
 
     <header class="hero">
-        <video playsinline autoplay muted loop class="hero-video">
-            <source src="hero-background.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+        <div id="particles-js"></div>
         <div class="hero-content">
             <h1 class="reveal">Gagandeep Singh Pahuja</h1>
             <p class="tagline reveal">I am an aspiring <span id="typing-animation"></span></p>
-            <a href="#about" class="btn reveal">Learn More About Me</a>
+            <div class="hero-buttons reveal">
+                <a href="resume.pdf" class="btn" download><i class="fas fa-download"></i> Download Resume</a>
+                <a href="#contact" class="btn btn-outline">Let's Talk</a>
+            </div>
         </div>
         <a href="#about" class="scroll-down-link">
             <div class="scroll-down"></div>
@@ -31,52 +68,109 @@
         <section id="about" class="container">
             <h2 class="section-title reveal">About Me</h2>
             <div class="about-grid reveal">
-                <div class="about-intro">
-                    <img src="images/profile.png" alt="Gagandeep Singh Pahuja" class="profile-pic">
-                    <h2>Gagandeep Singh Pahuja</h2>
-                    <p class="subtitle">Aspiring Project Manager | MS in MOT Student</p>
+                <div class="about-img">
+                    <img src="assets/images/profile.png" alt="Gagandeep Singh Pahuja" class="profile-pic">
                     <div class="social-links">
-                        <a href="https://www.linkedin.com/in/gagandeep-singh-pahuja-3210ba158" target="_blank" class="social-icon linkedin"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/gagan._sardar_ji/" target="_blank" class="social-icon instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="mailto:gdspahuja@gmail.com" class="social-icon gmail"><i class="fas fa-envelope"></i></a>
+                        <a href="https://www.linkedin.com/in/gagandeep-singh-pahuja-555023166/" target="_blank"
+                            class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.instagram.com/gagan._sardar_ji/" target="_blank" class="social-icon"><i
+                                class="fab fa-instagram"></i></a>
+                        <a href="mailto:gdspahuja@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
                     </div>
                 </div>
-                <div class="about-summary">
-                    <h3>Bridging Strategy & Execution</h3>
-                    <p>As a Management of Technology student at NYU, I am passionate about leading complex projects from concept to completion. My background in engineering and product development has given me a unique ability to bridge the gap between technical teams and business stakeholders, ensuring clarity, alignment, and on-time delivery.</p>
+                <div class="about-intro">
+                    <p class="subtitle">WHO I AM</p>
+                    <h2>Aspiring Project Manager & Technology Strategist</h2>
+                    <div class="about-summary">
+                        <h3>I turn complex problems into elegant solutions.</h3>
+                        <p>With a background in Computer Science and hands-on experience in DevOps and AI, I possess a
+                            unique ability to understand technical nuances while keeping the big picture in focus. I am
+                            passionate about leading teams, optimizing workflows, and delivering products that make a
+                            real impact.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="skills-section">
+            <div class="container skills-container">
+                <h2 class="section-title reveal">Technical Skills</h2>
+                <div class="skills-grid reveal">
+                    <div class="skill-category">
+                        <h3>Languages & Tools</h3>
+                        <div class="skill-tags">
+                            <span>Python</span>
+                            <span>C++</span>
+                            <span>SQL</span>
+                            <span>Git</span>
+                            <span>JIRA</span>
+                            <span>Tableau</span>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h3>Cloud & DevOps</h3>
+                        <div class="skill-tags">
+                            <span>AWS</span>
+                            <span>Google Cloud Platform</span>
+                            <span>Docker</span>
+                            <span>Kubernetes</span>
+                            <span>Jenkins</span>
+                            <span>Terraform</span>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h3>Methodologies</h3>
+                        <div class="skill-tags">
+                            <span>Agile / Scrum</span>
+                            <span>Waterfall</span>
+                            <span>SDLC</span>
+                            <span>Risk Management</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="experience" class="container">
             <h2 class="section-title reveal">Professional Experience</h2>
-            <div class="card-grid">
+            <div class="card-grid reveal">
                 <div class="card reveal">
                     <h3><i class="fas fa-briefcase card-icon"></i>Assistant Product Manager</h3>
                     <p class="company">Foxbiz Software Pvt. Ltd.</p>
                     <p class="date">Jan 2025 - Aug 2025</p>
+                    <p>Managed feature requirements and coordinated the implementation of user-facing modules for a
+                        scalable business platform, ensuring alignment between product vision and development timelines.
+                    </p>
                 </div>
                 <div class="card reveal">
                     <h3><i class="fas fa-briefcase card-icon"></i>DevOps Engineer</h3>
                     <p class="company">Tata Consultancy Services</p>
                     <p class="date">Jul 2022 - Jan 2025</p>
+                    <p>Led initiatives to automate and manage cloud infrastructure using AWS and GCP, improving system
+                        reliability and spearheading cross-team collaboration.</p>
                 </div>
                 <div class="card reveal">
                     <h3><i class="fas fa-microchip card-icon"></i>AI/ML Intern</h3>
                     <p class="company">4Mirrortech Innovatives</p>
                     <p class="date">Aug 2021 - Mar 2022</p>
+                    <p>Developed and optimized machine learning models for image recognition, involving the full
+                        lifecycle from data preprocessing to deployment.</p>
                 </div>
             </div>
         </section>
 
         <section id="projects" class="container">
-            <h2 class="section-title reveal">Project Highlights</h2>
-            <div class="projects-grid">
+            <h2 class="section-title reveal">Featured Projects</h2>
+            <div class="projects-grid reveal">
                 <div class="project-card reveal">
                     <div class="project-info">
-                        <h3>Modular Business Platform</h3>
-                        <p>Managed feature requirements and coordinated the implementation of user-facing modules for a scalable business platform at Foxbiz, ensuring alignment between product vision and development timelines to empower small enterprises.</p>
+                        <h3>Smart Portfolio Website</h3>
+                        <p>Designed and developed this responsive portfolio website using HTML, CSS, and JavaScript.
+                            Integrated AI-generated content and modern UI/UX principles to showcase professional
+                            achievements.</p>
                         <div class="tech-stack">
+                            <span>HTML5/CSS3</span>
+                            <span>JavaScript</span>
                             <span>Project Management</span>
                             <span>Stakeholder Communication</span>
                         </div>
@@ -85,7 +179,9 @@
                 <div class="project-card reveal">
                     <div class="project-info">
                         <h3>Cloud Infrastructure Automation</h3>
-                        <p>As a DevOps Engineer at TCS, I led initiatives to automate and manage cloud infrastructure using AWS and GCP, improving system reliability and spearheading cross-team collaboration to resolve critical issues efficiently.</p>
+                        <p>As a DevOps Engineer at TCS, I led initiatives to automate and manage cloud infrastructure
+                            using AWS and GCP, improving system reliability and spearheading cross-team collaboration to
+                            resolve critical issues efficiently.</p>
                         <div class="tech-stack">
                             <span>AWS & GCP</span>
                             <span>CI/CD Pipelines</span>
@@ -96,7 +192,9 @@
                 <div class="project-card reveal">
                     <div class="project-info">
                         <h3>AI-Powered Image Processing</h3>
-                        <p>Developed and optimized machine learning models for image recognition at 4Mirrortech. This project involved the full lifecycle from data preprocessing, model training, and deployment to performance refinement.</p>
+                        <p>Developed and optimized machine learning models for image recognition at 4Mirrortech. This
+                            project involved the full lifecycle from data preprocessing, model training, and deployment
+                            to performance refinement.</p>
                         <div class="tech-stack">
                             <span>TensorFlow</span>
                             <span>OpenCV</span>
@@ -106,17 +204,14 @@
                 </div>
             </div>
         </section>
-        
+
         <section id="contact" class="contact-section">
-            <video playsinline autoplay muted loop class="contact-video-bg">
-                <source src="contact-background.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
             <div class="container contact-container">
-                <div class="contact-grid">
-                    <div class="contact-text reveal">
+                <div class="contact-wrapper">
+                    <div class="contact-header reveal">
                         <h2 class="section-title">Let's Build Something Great</h2>
-                        <p>Whether you're hiring for a new role, seeking a mentor, or have a revolutionary startup idea, I'm ready to listen. Let's get started!</p>
+                        <p>Whether you're hiring for a new role, seeking a mentor, or have a revolutionary startup idea,
+                            I'm ready to listen. Let's get started!</p>
                     </div>
                     <form action="https://formspree.io/f/xnnggebg" method="POST" class="contact-form reveal">
                         <div class="form-group">
@@ -146,12 +241,16 @@
             </div>
         </section>
     </main>
-    
+
     <footer>
         <p>&copy; 2025 Gagandeep Singh Pahuja. Designed with passion.</p>
     </footer>
 
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
-    <script src="main.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="js/main.js"></script>
 </body>
+
 </html>
