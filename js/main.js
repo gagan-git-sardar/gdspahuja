@@ -71,8 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const typed = new Typed('#typing-animation', {
                 strings: [
-                    'Project Manager.',
-                    'Technology Strategist.',
+                    'Product Manager.',
+                    'Product Strategist.',
                     'Innovative Leader.',
                     'Problem Solver.'
                 ],
