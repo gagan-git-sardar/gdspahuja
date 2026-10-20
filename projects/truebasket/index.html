@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrueBasket — Know the real cost of your grocery order</title>
+<meta name="description" content="A concept demo exploring price transparency in online grocery: audit a basket, compare in-store vs in-app prices, fees and all.">
+<style>
+  :root{
+    --bg:#F7F6F1; --card:#FFFFFF; --ink:#152419; --muted:#5C6B60;
+    --green:#0E7C3E; --green-dark:#0A5C2E; --green-soft:#E6F3EA;
+    --amber:#9A6B12; --amber-bg:#FBF3DF; --red:#B3261E; --red-bg:#FBEAE8;
+    --line:#E3E1D8; --radius:14px;
+    --shadow:0 1px 2px rgba(21,36,25,.05),0 8px 24px rgba(21,36,25,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px 72px}
+  a{color:var(--green);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* Hero */
+  header{padding:56px 0 8px}
+  .eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--green-dark);background:var(--green-soft);padding:6px 12px;border-radius:999px}
+  h1{font-size:clamp(40px,6vw,64px);line-height:1.04;letter-spacing:-.02em;margin:18px 0 12px;font-weight:800}
+  h1 .accent{color:var(--green)}
+  .sub{font-size:clamp(17px,2.2vw,20px);color:var(--muted);max-width:680px}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:34px 0 8px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+  .stat .big{font-size:26px;font-weight:800;letter-spacing:-.01em}
+  .stat .lbl{font-size:13.5px;color:var(--muted);margin-top:4px}
+  @media(max-width:760px){.stats{grid-template-columns:1fr}}
+
+  /* Demo layout */
+  .demo{display:grid;grid-template-columns:1fr 390px;gap:22px;margin-top:30px;align-items:start}
+  @media(max-width:920px){.demo{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .panel-head{padding:18px 20px 6px}
+  .panel-head h2{font-size:20px;letter-spacing:-.01em}
+  .panel-head p{font-size:14px;color:var(--muted);margin-top:2px}
+
+  /* Controls */
+  .controls{padding:14px 20px 4px;display:flex;flex-direction:column;gap:14px}
+  .ctl-label{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .seg{display:flex;background:#EFEDE6;border-radius:10px;padding:4px;gap:4px}
+  .seg button{flex:1;border:0;background:transparent;padding:9px 10px;border-radius:8px;font-size:13.5px;font-weight:600;
+    color:var(--muted);cursor:pointer;transition:all .15s}
+  .seg button.active{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(21,36,25,.15)}
+  .seg button:disabled{opacity:.45;cursor:not-allowed}
+  .ctl-note{font-size:12.5px;color:var(--muted)}
+
+  /* Catalog */
+  .catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:16px 20px 20px}
+  .item{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:2px;background:#FFF}
+  .item .emoji{font-size:26px;line-height:1.1}
+  .item .name{font-weight:700;font-size:14.5px}
+  .item .unit{font-size:12px;color:var(--muted)}
+  .item .prices{margin-top:6px;font-size:12.5px;display:flex;flex-direction:column}
+  .item .prices .shelf{color:var(--muted)}
+  .item .prices .app{font-weight:700}
+  .item .prices .app.up{color:var(--red)}
+  .item .prices .app.down{color:var(--green-dark)}
+  .stepper{margin-top:10px;display:flex;align-items:center;gap:8px}
+  .stepper button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--card);
+    font-size:17px;line-height:1;cursor:pointer;color:var(--ink)}
+  .stepper button:hover{border-color:var(--green);color:var(--green-dark)}
+  .stepper .qty{min-width:20px;text-align:center;font-weight:700;font-size:14px}
+  .stepper .add{width:auto;border-radius:999px;padding:0 14px;font-size:13px;font-weight:700;background:var(--green);color:#fff;border-color:var(--green)}
+  .stepper .add:hover{background:var(--green-dark);color:#fff}
+
+  /* Receipt */
+  .receipt{position:sticky;top:18px;padding:20px}
+  @media(max-width:920px){.receipt{position:static}}
+  .receipt h2{font-size:19px;letter-spacing:-.01em}
+  .receipt .who{font-size:13px;color:var(--muted);margin:2px 0 12px}
+  .lines{display:flex;flex-direction:column}
+  .line{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .line .lft{display:flex;flex-direction:column}
+  .line .nm{font-weight:600}
+  .line .dt{font-size:12px;color:var(--muted)}
+  .line .rgt{text-align:right;display:flex;flex-direction:column;align-items:flex-end}
+  .chip{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-top:3px}
+  .chip.same{background:var(--green-soft);color:var(--green-dark)}
+  .chip.up{background:var(--red-bg);color:var(--red)}
+  .chip.down{background:var(--green-soft);color:var(--green-dark)}
+  .empty{padding:18px 0;color:var(--muted);font-size:14px;text-align:center}
+  .totals{margin-top:14px;font-size:14px}
+  .trow{display:flex;justify-content:space-between;padding:5px 0;color:#2A3A2F}
+  .trow.dim{color:var(--muted)}
+  .trow.grand{border-top:2px solid var(--ink);margin-top:8px;padding-top:10px;font-size:17px;font-weight:800;color:var(--ink)}
+  .bars{margin:16px 0 4px}
+  .bar-row{display:flex;align-items:center;gap:10px;font-size:12.5px;margin:6px 0}
+  .bar-row .bl{width:64px;color:var(--muted);font-weight:600}
+  .bar-track{flex:1;height:10px;background:#EFEDE6;border-radius:99px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:99px;transition:width .35s ease}
+  .bar-fill.shelf{background:#9DB8A6}
+  .bar-fill.app{background:var(--green)}
+  .bar-row .bv{width:64px;text-align:right;font-weight:700}
+  .scorebox{margin-top:16px;border-radius:12px;padding:16px;background:var(--green-soft)}
+  .scorebox.warn{background:var(--amber-bg)}
+  .scorebox.bad{background:var(--red-bg)}
+  .score-top{display:flex;align-items:baseline;gap:10px}
+  .score-num{font-size:38px;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .score-lbl{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .verdict{font-size:14.5px;margin-top:6px;font-weight:600}
+  .score-why{font-size:13px;color:#33453A;margin-top:4px}
+  .alt-shopper{margin-top:12px;font-size:13.5px;background:#fff;border:1px dashed var(--line);border-radius:10px;padding:10px 12px}
+
+  /* Explainer + sources */
+  section.more{margin-top:44px}
+  section.more h2{font-size:24px;letter-spacing:-.01em;margin-bottom:10px}
+  section.more p{color:#33453A;max-width:760px;margin-bottom:10px}
+  .srcs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+  @media(max-width:760px){.srcs{grid-template-columns:1fr}}
+  .src{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+  .src .when{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green-dark)}
+  .src .what{font-size:14.5px;margin-top:5px;font-weight:600}
+  .src .who{font-size:13px;color:var(--muted);margin-top:3px}
+  footer{margin-top:52px;border-top:1px solid var(--line);padding-top:20px;font-size:13px;color:var(--muted);
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="eyebrow">Concept demo · Not affiliated with Instacart</span>
+    <h1>True<span class="accent">Basket</span></h1>
+    <p class="sub">Every fee, every markup, one honest total. Build a grocery basket and audit what it
+    really costs in the app versus on the shelf, and whether everyone else is paying the same price.</p>
+    <div class="stats">
+      <div class="stat"><div class="big">~75%</div><div class="lbl">of items tested showed different prices to different shoppers, same store, same time (Dec 2025 study)</div></div>
+      <div class="stat"><div class="big">$60M</div><div class="lbl">FTC settlement with Instacart over deceptive pricing and enrolment practices (Dec 2025)</div></div>
+      <div class="stat"><div class="big">22 Dec 2025</div><div class="lbl">Instacart ends all item price tests and commits to the same price for everyone</div></div>
+    </div>
+  </header>
+
+  <div class="demo">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Run the audit</h2>
+        <p>Pick an era, add groceries, and watch the receipt. Prices are illustrative sample data.</p>
+      </div>
+      <div class="controls">
+        <div>
+          <div class="ctl-label">Pricing era</div>
+          <div class="seg" id="eraSeg">
+            <button data-era="before">Before: price experiments</button>
+            <button data-era="after" class="active">After: same price for everyone</button>
+          </div>
+        </div>
+        <div>
+          <div class="ctl-label">Whose prices?</div>
+          <div class="seg" id="shopperSeg">
+            <button data-shopper="0" class="active">Shopper A</button>
+            <button data-shopper="1">Shopper B</button>
+            <button data-shopper="2">Shopper C</button>
+          </div>
+          <div class="ctl-note" id="shopperNote">Under the same-price commitment, every shopper sees identical item prices.</div>
+        </div>
+        <div>
+          <div class="ctl-label">Shopper tip</div>
+          <div class="seg" id="tipSeg">
+            <button data-tip="0">0%</button>
+            <button data-tip="0.05">5%</button>
+            <button data-tip="0.10" class="active">10%</button>
+            <button data-tip="0.15">15%</button>
+          </div>
+        </div>
+      </div>
+      <div class="catalog" id="catalog"></div>
+    </div>
+
+    <div class="panel receipt" id="receipt"></div>
+  </div>
+
+  <section class="more">
+    <h2>Why this matters</h2>
+    <p>In December 2025, a Consumer Reports and Groundwork Collaborative investigation found that Instacart's
+    AI-driven pricing experiments meant most shoppers were quietly paying different prices for identical groceries.
+    The FTC followed with a $60 million settlement and an investigation into the pricing tool behind it. Instacart
+    responded by ending item price tests altogether and promising the same price to everyone at the same store and time.</p>
+    <p>That promise is only worth something if shoppers can check it. TrueBasket is a concept for the transparency
+    layer that promise needs: one honest total, every fee named, every price difference explained in plain language.
+    The True Cost Score rewards low markups, low fee load, and, above all, prices that do not change depending on who is asking.</p>
+    <div class="srcs">
+      <div class="src"><div class="when">Dec 2025</div><div class="what">437-shopper pricing study: ~75% of items priced differently per shopper, up to 23% higher</div><div class="who">Consumer Reports / Groundwork Collaborative</div></div>
+      <div class="src"><div class="when">17–18 Dec 2025</div><div class="what">FTC civil investigative demand into the Eversight AI pricing tool; $60M settlement announced</div><div class="who">Reuters; Federal Trade Commission</div></div>
+      <div class="src"><div class="when">22 Dec 2025</div><div class="what">Instacart ends all item price tests and commits to same price for everyone</div><div class="who">Instacart company announcement</div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>TrueBasket is a concept project by <a href="https://www.linkedin.com/in/gdspahuja/" target="_blank" rel="noopener">Gagandeep Singh Pahuja</a>, built for illustration. Sample prices only. Not affiliated with or endorsed by Instacart.</div>
+    <div>Week 1 of a weekly MVP series</div>
+  </footer>
+
+</div>
+
+<script>
+const ITEMS = [
+  {id:'milk',    name:'Whole Milk',       unit:'1 gal',     emoji:'🥛', shelf:3.89,  markup:0.08},
+  {id:'eggs',    name:'Large Eggs',       unit:'12 ct',     emoji:'🥚', shelf:4.29,  markup:0.10},
+  {id:'bread',   name:'Sourdough Loaf',   unit:'16 oz',     emoji:'🍞', shelf:5.49,  markup:0.12},
+  {id:'avo',     name:'Hass Avocados',    unit:'4 ct',      emoji:'🥑', shelf:5.00,  markup:0.15},
+  {id:'chicken', name:'Chicken Breast',   unit:'1 lb',      emoji:'🍗', shelf:6.99,  markup:0.10},
+  {id:'coffee',  name:'Ground Coffee',    unit:'12 oz',     emoji:'☕', shelf:11.99, markup:0.06},
+  {id:'yogurt',  name:'Greek Yogurt',     unit:'32 oz',     emoji:'🥣', shelf:5.79,  markup:0.09},
+  {id:'cheese',  name:'Cheddar Block',    unit:'8 oz',      emoji:'🧀', shelf:3.49,  markup:0.11},
+  {id:'tomato',  name:'Roma Tomatoes',    unit:'1 lb',      emoji:'🍅', shelf:1.89,  markup:0.14},
+  {id:'spinach', name:'Baby Spinach',     unit:'5 oz',      emoji:'🥬', shelf:3.29,  markup:0.13},
+  {id:'pasta',   name:'Spaghetti',        unit:'16 oz',     emoji:'🍝', shelf:1.79,  markup:0.07},
+  {id:'oil',     name:'Olive Oil',        unit:'500 ml',    emoji:'🫒', shelf:9.99,  markup:0.05},
+  {id:'oj',      name:'Orange Juice',     unit:'52 oz',     emoji:'🍊', shelf:4.19,  markup:0.10},
+  {id:'icecream',name:'Ice Cream Pint',   unit:'16 oz',     emoji:'🍨', shelf:5.29,  markup:0.12},
+  {id:'soap',    name:'Dish Soap',        unit:'19 oz',     emoji:'🧴', shelf:3.99,  markup:0.08},
+  {id:'towels',  name:'Paper Towels',     unit:'6 rolls',   emoji:'🧻', shelf:7.49,  markup:0.06},
+  {id:'banana',  name:'Bananas',          unit:'1 bunch',   emoji:'🍌', shelf:1.29,  markup:0.09},
+  {id:'salmon',  name:'Salmon Fillet',    unit:'1 lb',      emoji:'🐟', shelf:11.49, markup:0.11}
+];
+
+const state = { era:'after', shopper:0, tip:0.10,
+  qty:{ milk:1, eggs:1, avo:1, coffee:1, chicken:2 } };
+
+const money = n => '$' + n.toFixed(2);
+const round2 = n => Math.round(n*100)/100;
+
+// 2025 experiment offsets: deterministic per item + shopper, -4% .. +23%
+function expOffset(itemIdx, shopperIdx){
+  let h = (itemIdx+1)*374761393 + (shopperIdx+1)*668265263;
+  h = Math.imul(h ^ (h >>> 13), 1274126177);
+  h = h ^ (h >>> 16);
+  const frac = (h >>> 0) / 4294967295;
+  return -0.04 + frac * 0.27;
+}
+function appUnit(item, shopperIdx){
+  const idx = ITEMS.indexOf(item);
+  if(state.era === 'after') return round2(item.shelf * (1 + item.markup));
+  return round2(item.shelf * (1 + expOffset(idx, shopperIdx)));
+}
+function basketItemsTotal(shopperIdx){
+  let t = 0;
+  for(const it of ITEMS){ const q = state.qty[it.id]||0; if(q) t += appUnit(it, shopperIdx)*q; }
+  return round2(t);
+}
+
+function renderCatalog(){
+  const cat = document.getElementById('catalog');
+  cat.innerHTML = '';
+  ITEMS.forEach(it => {
+    const q = state.qty[it.id]||0;
+    const app = appUnit(it, state.shopper);
+    const diff = (app - it.shelf)/it.shelf;
+    const appCls = Math.abs(diff) < 0.001 ? '' : (diff > 0 ? 'up' : 'down');
+    const card = document.createElement('div');
+    card.className = 'item';
+    card.innerHTML =
+      '<div class="emoji">'+it.emoji+'</div>' +
+      '<div class="name">'+it.name+'</div>' +
+      '<div class="unit">'+it.unit+'</div>' +
+      '<div class="prices"><span class="shelf">Shelf '+money(it.shelf)+'</span>' +
+      '<span class="app '+appCls+'">In app '+money(app)+'</span></div>' +
+      '<div class="stepper">' +
+        (q === 0
+          ? '<button class="add" data-add="'+it.id+'">Add</button>'
+          : '<button data-dec="'+it.id+'" aria-label="Remove one">−</button>' +
+            '<span class="qty">'+q+'</span>' +
+            '<button data-inc="'+it.id+'" aria-label="Add one">+</button>') +
+      '</div>';
+    cat.appendChild(card);
+  });
+  cat.querySelectorAll('[data-add],[data-inc]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.add || b.dataset.inc; state.qty[id] = (state.qty[id]||0)+1; render();
+  }));
+  cat.querySelectorAll('[data-dec]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.dec; state.qty[id] = Math.max(0,(state.qty[id]||0)-1); render();
+  }));
+}
+
+function renderReceipt(){
+  const box = document.getElementById('receipt');
+  const chosen = ITEMS.filter(it => (state.qty[it.id]||0) > 0);
+  const shopperName = ['A','B','C'][state.shopper];
+  let html = '<h2>Receipt audit</h2><div class="who">' +
+    (state.era === 'after'
+      ? 'Same-price era · prices identical for every shopper'
+      : 'Experiment era · you are seeing Shopper ' + shopperName + '\'s prices') + '</div>';
+
+  if(chosen.length === 0){
+    html += '<div class="empty">Your basket is empty.<br>Add a few groceries to run the audit.</div>';
+    box.innerHTML = html; return;
+  }
+
+  let shelfTotal = 0, appTotal = 0;
+  html += '<div class="lines">';
+  for(const it of chosen){
+    const q = state.qty[it.id];
+    const app = appUnit(it, state.shopper);
+    const lineShelf = round2(it.shelf*q), lineApp = round2(app*q);
+    shelfTotal += lineShelf; appTotal += lineApp;
+    const diff = (app - it.shelf)/it.shelf;
+    let chip;
+    if(Math.abs(diff) < 0.001) chip = '<span class="chip same">Same as shelf</span>';
+    else if(diff > 0) chip = '<span class="chip up">+' + Math.round(diff*100) + '% in app</span>';
+    else chip = '<span class="chip down">' + Math.round(diff*100) + '% in app</span>';
+    html += '<div class="line"><div class="lft"><span class="nm">'+it.emoji+' '+it.name+' × '+q+'</span>' +
+      '<span class="dt">Shelf '+money(it.shelf)+' each · In app '+money(app)+' each</span></div>' +
+      '<div class="rgt"><span>'+money(lineApp)+'</span>' + chip + '</div></div>';
+  }
+  html += '</div>';
+  shelfTotal = round2(shelfTotal); appTotal = round2(appTotal);
+
+  const delivery = appTotal >= 35 ? 0 : 3.99;
+  const service = Math.max(2.00, round2(0.05*appTotal));
+  const tip = round2(state.tip * appTotal);
+  const grand = round2(appTotal + delivery + service + tip);
+  const premium = round2(grand - shelfTotal);
+  const premiumPct = shelfTotal ? premium/shelfTotal*100 : 0;
+
+  // True Cost Score
+  const avgMarkupPct = shelfTotal ? (appTotal - shelfTotal)/shelfTotal*100 : 0;
+  const feeLoadPct = shelfTotal ? (delivery + service)/shelfTotal*100 : 0;
+  let consistencyPenalty = 0, cheapest = appTotal, cheapestName = shopperName;
+  if(state.era === 'before'){
+    for(let sIdx = 0; sIdx < 3; sIdx++){
+      const t = basketItemsTotal(sIdx);
+      if(t < cheapest){ cheapest = t; cheapestName = ['A','B','C'][sIdx]; }
+    }
+    const spreadPct = cheapest ? (appTotal - cheapest)/cheapest*100 : 0;
+    consistencyPenalty = spreadPct * 1.6;
+  }
+  let score = Math.round(100 - Math.max(0,avgMarkupPct)*1.1 - feeLoadPct*0.55 - consistencyPenalty);
+  score = Math.max(5, Math.min(99, score));
+
+  let verdict, why, boxCls = 'scorebox';
+  if(score >= 85){ verdict = 'Transparent and fair.'; }
+  else if(score >= 70){ verdict = 'Mostly fair. Watch the fees.'; boxCls += ' warn'; }
+  else if(score >= 50){ verdict = 'Pricey convenience.'; boxCls += ' warn'; }
+  else { verdict = 'You are overpaying.'; boxCls += ' bad'; }
+  const drivers = [];
+  if(avgMarkupPct > 1) drivers.push('item markups add ' + money(round2(appTotal - shelfTotal)) + ' over shelf prices');
+  if(state.era === 'before' && consistencyPenalty > 0.5) drivers.push('your prices are higher than another shopper\'s for the same basket');
+  if(feeLoadPct > 4) drivers.push('delivery and service fees load ' + feeLoadPct.toFixed(1) + '% on top of shelf prices');
+  why = drivers.length ? 'Why: ' + drivers.join('; ') + '.' : 'Why: no markups, no surprises, fees are the only extra.';
+
+  const maxBar = Math.max(shelfTotal, appTotal);
+  html += '<div class="bars">' +
+    '<div class="bar-row"><span class="bl">On shelf</span><div class="bar-track"><div class="bar-fill shelf" style="width:' + (shelfTotal/maxBar*100) + '%"></div></div><span class="bv">' + money(shelfTotal) + '</span></div>' +
+    '<div class="bar-row"><span class="bl">In app</span><div class="bar-track"><div class="bar-fill app" style="width:' + (appTotal/maxBar*100) + '%"></div></div><span class="bv">' + money(appTotal) + '</span></div></div>';
+
+  html += '<div class="totals">' +
+    '<div class="trow dim"><span>Same basket in store</span><span>' + money(shelfTotal) + '</span></div>' +
+    '<div class="trow"><span>Items in app</span><span>' + money(appTotal) + '</span></div>' +
+    '<div class="trow dim"><span>Delivery ' + (delivery === 0 ? '(free over $35)' : '') + '</span><span>' + money(delivery) + '</span></div>' +
+    '<div class="trow dim"><span>Service fee (5%)</span><span>' + money(service) + '</span></div>' +
+    '<div class="trow dim"><span>Tip (' + Math.round(state.tip*100) + '%)</span><span>' + money(tip) + '</span></div>' +
+    '<div class="trow grand"><span>True total</span><span>' + money(grand) + '</span></div>' +
+    '<div class="trow"><span>Convenience premium</span><span>' + money(premium) + ' (' + premiumPct.toFixed(1) + '%)</span></div></div>';
+
+  if(state.era === 'before'){
+    const myT = appTotal;
+    const others = [0,1,2].filter(i => i !== state.shopper)
+      .map(i => 'Shopper ' + ['A','B','C'][i] + ': ' + money(basketItemsTotal(i))).join(' · ');
+    html += '<div class="alt-shopper">Same basket, other shoppers (items only):<br><strong>' + others + '</strong><br>You pay <strong>' + money(myT) + '</strong>.' +
+      (cheapest < myT ? ' Shopper ' + cheapestName + ' pays ' + money(round2(myT - cheapest)) + ' less than you for identical groceries.' : ' You have the lowest price of the three this time. Someone else is paying more.') + '</div>';
+  }
+
+  html += '<div class="'+boxCls+'"><div class="score-top"><span class="score-num">' + score + '</span>' +
+    '<span class="score-lbl">True Cost<br>Score / 100</span></div>' +
+    '<div class="verdict">' + verdict + '</div><div class="score-why">' + why + '</div></div>';
+
+  box.innerHTML = html;
+}
+
+function render(){ renderCatalog(); renderReceipt(); }
+
+function segWire(id, attr, apply){
+  const seg = document.getElementById(id);
+  seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    seg.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    apply(b.dataset[attr]);
+    render();
+  }));
+}
+segWire('eraSeg','era', v => {
+  state.era = v;
+  document.getElementById('shopperNote').textContent = v === 'after'
+    ? 'Under the same-price commitment, every shopper sees identical item prices.'
+    : 'Under 2025-style experiments, the same item could cost each shopper a different amount. Switch shoppers and watch the receipt.';
+});
+segWire('shopperSeg','shopper', v => { state.shopper = parseInt(v,10); });
+segWire('tipSeg','tip', v => { state.tip = parseFloat(v); });
+
+render();
+</script>
+</body>
+</html>
