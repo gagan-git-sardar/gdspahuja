@@ -7,17 +7,49 @@
 <style>
   :root { color-scheme: light dark; }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #0f1115; color: #f2f3f5; display: flex; flex-direction: column; height: 100dvh; }
-  header { padding: 16px 18px 10px; border-bottom: 1px solid #262a33; }
-  header h1 { font-size: 19px; margin: 0 0 4px; }
-  header p { margin: 0; font-size: 13px; color: #a7adba; line-height: 1.45; }
-  header a { color: #7db4ff; }
-  #chat { flex: 1; overflow-y: auto; padding: 14px 14px 6px; display: flex; flex-direction: column; gap: 10px; }
-  .row { display: flex; gap: 8px; align-items: flex-end; max-width: 92%; animation: rise .45s cubic-bezier(.2,.8,.3,1) both; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #0f1115; color: #f2f3f5; min-height: 100dvh; display: flex; align-items: center; justify-content: center; }
+  a { color: #7db4ff; }
+
+  /* Minimal landing behind the popup */
+  .landing { text-align: center; padding: 32px 22px 110px; max-width: 560px; animation: rise .5s cubic-bezier(.2,.8,.3,1) both; }
+  .landing img.face { width: 92px; height: 92px; border-radius: 50%; object-fit: cover; border: 2px solid #39404e; }
+  .landing h1 { font-size: 26px; margin: 16px 0 6px; }
+  .landing p.sub { margin: 0 0 6px; font-size: 15px; color: #a7adba; line-height: 1.55; }
+  .landing p.note { font-size: 13px; color: #7c8494; line-height: 1.55; margin: 10px 0 20px; }
+  .landing .btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn { border: 1px solid #39404e; background: #161a21; color: #f2f3f5; border-radius: 999px; padding: 11px 18px; font-size: 14px; cursor: pointer; text-decoration: none; display: inline-block; transition: transform .15s, border-color .2s, background .2s; }
+  .btn:hover { border-color: #2563eb; }
+  .btn:active { transform: scale(.96); }
+  .btn.primary { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+  /* Floating launcher */
+  #launcher { position: fixed; right: 20px; bottom: 20px; width: 62px; height: 62px; border-radius: 50%; border: 2px solid #39404e; padding: 0; cursor: pointer; background: #161a21; overflow: visible; z-index: 40; box-shadow: 0 10px 30px rgba(0,0,0,.5); animation: pop .5s .3s cubic-bezier(.2,.8,.3,1) both; transition: transform .15s; }
+  #launcher:active { transform: scale(.93); }
+  #launcher img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+  #launcher i { position: absolute; right: 1px; top: 1px; width: 14px; height: 14px; border-radius: 50%; background: #34d399; border: 2px solid #0f1115; animation: pulse 2s infinite; }
+  #launcher .tag { position: absolute; right: 74px; top: 50%; transform: translateY(-50%); white-space: nowrap; background: #1d2129; border: 1px solid #39404e; color: #cfd6e4; font-size: 13px; padding: 7px 12px; border-radius: 999px; animation: rise .5s .8s both; }
+  @keyframes pop { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(52,211,153,.5); } 70% { box-shadow: 0 0 0 7px rgba(52,211,153,0); } 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); } }
+
+  /* Chat panel */
+  #panel { position: fixed; right: 20px; bottom: 96px; width: min(384px, calc(100vw - 24px)); height: min(620px, calc(100dvh - 116px)); background: #10131a; border: 1px solid #2b303d; border-radius: 22px; box-shadow: 0 24px 60px rgba(0,0,0,.55); display: flex; flex-direction: column; overflow: hidden; z-index: 41; opacity: 0; transform: translateY(14px) scale(.97); transform-origin: bottom right; pointer-events: none; transition: opacity .25s ease, transform .25s cubic-bezier(.2,.8,.3,1); }
+  #panel.open { opacity: 1; transform: none; pointer-events: auto; }
+  #panel header { padding: 12px 14px; border-bottom: 1px solid #262a33; display: flex; align-items: center; gap: 10px; background: #14171f; }
+  #panel header img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1px solid #39404e; }
+  #panel header .who { flex: 1; min-width: 0; }
+  #panel header h2 { font-size: 15px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #panel header p { margin: 1px 0 0; font-size: 12px; color: #a7adba; display: flex; align-items: center; gap: 5px; }
+  #panel header p i { width: 7px; height: 7px; border-radius: 50%; background: #34d399; display: inline-block; }
+  #closeBtn { background: transparent; border: 0; color: #a7adba; font-size: 22px; line-height: 1; cursor: pointer; padding: 4px 6px; }
+  #stage { position: relative; height: 132px; flex: none; background: radial-gradient(ellipse 70% 90% at 50% 100%, #232838 0%, #10131a 70%); border-bottom: 1px solid #262a33; overflow: hidden; }
+  #stage canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; cursor: grab; transition: opacity 1s ease; }
+  #stage-hint { position: absolute; right: 10px; bottom: 6px; font-size: 10px; color: #7c8494; pointer-events: none; }
+  #chat { flex: 1; overflow-y: auto; padding: 14px 12px 6px; display: flex; flex-direction: column; gap: 10px; }
+  .row { display: flex; gap: 8px; align-items: flex-end; max-width: 94%; animation: rise .45s cubic-bezier(.2,.8,.3,1) both; }
   .row.agent-row { align-self: flex-start; }
   .row.user-row { align-self: flex-end; flex-direction: row-reverse; }
-  .avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex: none; border: 1px solid #39404e; margin-bottom: 2px; }
-  .msg { padding: 10px 13px; border-radius: 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+  .avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; flex: none; border: 1px solid #39404e; margin-bottom: 2px; }
+  .msg { padding: 9px 12px; border-radius: 16px; font-size: 14.5px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
   .agent { background: #1d2129; border-bottom-left-radius: 4px; }
   .user { background: #2563eb; color: #fff; border-bottom-right-radius: 4px; }
   @keyframes rise { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
@@ -26,62 +58,97 @@
   .dots span:nth-child(2) { animation-delay: .15s; }
   .dots span:nth-child(3) { animation-delay: .3s; }
   @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: .45; } 30% { transform: translateY(-4px); opacity: 1; } }
-  .status { display: inline-flex; align-items: center; gap: 6px; }
-  .status i { width: 8px; height: 8px; border-radius: 50%; background: #34d399; display: inline-block; animation: pulse 2s infinite; }
-  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(52,211,153,.5); } 70% { box-shadow: 0 0 0 7px rgba(52,211,153,0); } 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); } }
-  #chips { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; padding: 10px 14px 4px; scrollbar-width: none; }
+  #chips { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; padding: 10px 12px 4px; scrollbar-width: none; }
   #chips::-webkit-scrollbar { display: none; }
-  .chip { border: 1px solid #39404e; background: #161a21; color: #cfd6e4; border-radius: 999px; padding: 7px 12px; font-size: 13px; cursor: pointer; white-space: nowrap; flex: none; animation: rise .5s cubic-bezier(.2,.8,.3,1) both; transition: border-color .2s, background .2s, transform .15s; }
+  .chip { border: 1px solid #39404e; background: #161a21; color: #cfd6e4; border-radius: 999px; padding: 7px 12px; font-size: 12.5px; cursor: pointer; white-space: nowrap; flex: none; animation: rise .5s cubic-bezier(.2,.8,.3,1) both; transition: border-color .2s, background .2s, transform .15s; }
   .chip:hover { border-color: #2563eb; background: #1d2129; }
   .chip:active { transform: scale(.96); }
-  .chip:nth-child(2) { animation-delay: .05s; } .chip:nth-child(3) { animation-delay: .1s; } .chip:nth-child(4) { animation-delay: .15s; }
-  .chip:nth-child(5) { animation-delay: .2s; } .chip:nth-child(6) { animation-delay: .25s; } .chip:nth-child(7) { animation-delay: .3s; } .chip:nth-child(8) { animation-delay: .35s; }
-  button.send { transition: transform .15s, background .2s; }
-  button.send:active { transform: scale(.94); }
-  input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.25); }
-  #stage canvas { transition: opacity 1s ease; }
-  @media (prefers-reduced-motion: reduce) { .row, .chip { animation: none; } .dots span, .status i { animation: none; } }
+  .chip:nth-child(2) { animation-delay: .04s; } .chip:nth-child(3) { animation-delay: .08s; } .chip:nth-child(4) { animation-delay: .12s; }
+  .chip:nth-child(5) { animation-delay: .16s; } .chip:nth-child(6) { animation-delay: .2s; } .chip:nth-child(7) { animation-delay: .24s; }
+  .chip:nth-child(8) { animation-delay: .28s; } .chip:nth-child(9) { animation-delay: .32s; } .chip:nth-child(10) { animation-delay: .36s; }
+  .chip:nth-child(11) { animation-delay: .4s; } .chip:nth-child(12) { animation-delay: .44s; }
   form { display: flex; gap: 8px; padding: 10px 12px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #262a33; }
-  input { flex: 1; padding: 12px 14px; border-radius: 999px; border: 1px solid #39404e; background: #161a21; color: #f2f3f5; font-size: 15px; }
-  button.send { padding: 0 18px; border: 0; border-radius: 999px; background: #2563eb; color: #fff; font-size: 15px; cursor: pointer; }
-  footer { padding: 0 14px 10px; font-size: 12px; color: #7c8494; text-align: center; }
-  footer a { color: #7db4ff; }
-  #stage { position: relative; height: clamp(190px, 30vh, 250px); flex: none; background: radial-gradient(ellipse 70% 90% at 50% 100%, #232838 0%, #0f1115 70%); border-bottom: 1px solid #262a33; overflow: hidden; }
-  #stage canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; cursor: grab; }
-  #stage-hint { position: absolute; right: 12px; bottom: 8px; font-size: 11px; color: #7c8494; pointer-events: none; }
+  input { flex: 1; padding: 11px 14px; border-radius: 999px; border: 1px solid #39404e; background: #161a21; color: #f2f3f5; font-size: 14.5px; min-width: 0; }
+  input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.25); }
+  button.send { padding: 0 16px; border: 0; border-radius: 999px; background: #2563eb; color: #fff; font-size: 14.5px; cursor: pointer; transition: transform .15s; }
+  button.send:active { transform: scale(.94); }
+  #panel footer { padding: 0 12px 9px; font-size: 11px; color: #7c8494; text-align: center; }
+  @media (prefers-reduced-motion: reduce) { .row, .chip, #launcher, #launcher .tag, .landing { animation: none; } .dots span, #launcher i { animation: none; } #panel { transition: none; } }
 </style>
 </head>
 <body>
-<header>
+<main class="landing">
+  <img class="face" src="../../assets/images/linkedin-profile.jpg" alt="Portrait of Gagandeep Singh Pahuja">
   <h1>Gagandeep Singh Pahuja &middot; &ldquo;Sky&rdquo;</h1>
-  <p>Forward deployed engineering, strategy and innovation &middot; NYU Tandon, MS Management of Technology &rsquo;27 &middot; VP, TechSHRM.
-  This is Sky&rsquo;s agent. Ask it anything about his work, his projects, or how to reach him.</p>
-  <p class="status" style="margin-top:6px"><i></i>Online, answers from Sky&rsquo;s verified record</p>
-</header>
-<div id="stage" aria-hidden="true"><div id="stage-hint">Drag to spin</div></div>
-<div id="chat"></div>
-<div id="chips">
-  <button class="chip" type="button">What roles is he looking for?</button>
-  <button class="chip" type="button">What is Sky building right now?</button>
-  <button class="chip" type="button">Tell me about GUARDIAN</button>
-  <button class="chip" type="button">What did he do at TCS?</button>
-  <button class="chip" type="button">Why forward deployed engineering?</button>
-  <button class="chip" type="button">What is his best project?</button>
-  <button class="chip" type="button">What did he do before NYU?</button>
-  <button class="chip" type="button">How do I reach him?</button>
-</div>
-<form id="form">
-  <input id="input" type="text" placeholder="Ask about Sky&hellip;" autocomplete="off" maxlength="500">
-  <button class="send" type="submit">Send</button>
-</form>
-<footer>
-  Prefer the human? <a href="https://www.linkedin.com/in/gdspahuja/">Connect on LinkedIn</a> &middot;
-  <a href="https://gagan-git-sardar.github.io/gdspahuja/">Portfolio</a>
-</footer>
+  <p class="sub">Forward deployed engineering, strategy and innovation &middot; NYU Tandon, MS Management of Technology &rsquo;27 &middot; VP, TechSHRM</p>
+  <p class="note">This page is Sky&rsquo;s agent. It answers questions about his work, projects, skills and how to reach him, from his verified record only. Tap the photo button in the corner to start.</p>
+  <div class="btns">
+    <button class="btn primary" type="button" id="openBtn">Chat with Sky&rsquo;s agent</button>
+    <a class="btn" href="https://www.linkedin.com/in/gdspahuja/">LinkedIn</a>
+    <a class="btn" href="https://gagan-git-sardar.github.io/gdspahuja/">Portfolio</a>
+  </div>
+</main>
+
+<button id="launcher" type="button" aria-label="Open chat with Sky's agent">
+  <img src="../../assets/images/linkedin-profile.jpg" alt="">
+  <span class="tag">Ask about Sky</span>
+  <i></i>
+</button>
+
+<section id="panel" aria-label="Chat with Sky's agent">
+  <header>
+    <img src="../../assets/images/linkedin-profile.jpg" alt="">
+    <div class="who">
+      <h2>Sky&rsquo;s agent</h2>
+      <p><i></i>Online &middot; answers from his verified record</p>
+    </div>
+    <button id="closeBtn" type="button" aria-label="Close chat">&times;</button>
+  </header>
+  <div id="stage" aria-hidden="true"><div id="stage-hint">Drag to spin</div></div>
+  <div id="chat"></div>
+  <div id="chips">
+    <button class="chip" type="button">What roles is he looking for?</button>
+    <button class="chip" type="button">What is Sky building right now?</button>
+    <button class="chip" type="button">Tell me about GUARDIAN</button>
+    <button class="chip" type="button">What did he do at TCS?</button>
+    <button class="chip" type="button">Why forward deployed engineering?</button>
+    <button class="chip" type="button">What is his best project?</button>
+    <button class="chip" type="button">What did he do before NYU?</button>
+    <button class="chip" type="button">Does Sky know SQL?</button>
+    <button class="chip" type="button">What certifications does he have?</button>
+    <button class="chip" type="button">What tools and skills does he use?</button>
+    <button class="chip" type="button">Has he founded anything?</button>
+    <button class="chip" type="button">How do I reach him?</button>
+  </div>
+  <form id="form">
+    <input id="input" type="text" placeholder="Ask about Sky&hellip;" autocomplete="off" maxlength="500">
+    <button class="send" type="submit">Send</button>
+  </form>
+  <footer>Prefer the human? <a href="https://www.linkedin.com/in/gdspahuja/">Connect on LinkedIn</a></footer>
+</section>
+
 <script>
 // Set this to the deployed proxy URL (see README.md). Until then the page
 // explains it is not live yet instead of failing silently.
 const ENDPOINT = "https://sky-agent-proxy.gsp10009.workers.dev/chat";
+const panel = document.getElementById("panel");
+const launcher = document.getElementById("launcher");
+let opened = false;
+function setPanel(open) {
+  panel.classList.toggle("open", open);
+  if (open && !opened) {
+    opened = true;
+    if (window.initSky3D) window.initSky3D();
+    else window.__skyWants3D = true;
+    const tag = launcher.querySelector(".tag");
+    if (tag) tag.style.display = "none";
+  }
+}
+launcher.addEventListener("click", () => setPanel(!panel.classList.contains("open")));
+document.getElementById("openBtn").addEventListener("click", () => setPanel(true));
+document.getElementById("closeBtn").addEventListener("click", () => setPanel(false));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") setPanel(false); });
+
 const chat = document.getElementById("chat");
 const form = document.getElementById("form");
 const input = document.getElementById("input");
@@ -105,7 +172,7 @@ function add(text, who) {
   chat.scrollTop = chat.scrollHeight;
   return div;
 }
-add("Hi, I am Sky's agent. I can tell you about his work at NYU and TCS, the products he is building, and the roles he is looking for. What would you like to know?", "agent");
+add("Hi, I am Sky's agent. I can tell you about his work at NYU and TCS, the products he is building, his skills and certifications, and the roles he is looking for. What would you like to know?", "agent");
 async function ask(text) {
   add(text, "user");
   history.push({ role: "user", text });
@@ -144,83 +211,90 @@ document.querySelectorAll(".chip").forEach((chip) => {
 } }
 </script>
 <script type="module">
-// Sky's 3D figure on the chat page. Decorative only: if anything fails
-// (no WebGL, CDN blocked, model missing) the stage removes itself and the
-// chat works exactly as before.
-try {
-  const THREE = await import("three");
-  const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
-  const { MeshoptDecoder } = await import("three/addons/libs/meshopt_decoder.module.js");
-  const stage = document.getElementById("stage");
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.domElement.style.opacity = "0";
-  stage.prepend(renderer.domElement);
-  const scene = new THREE.Scene();
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x2a2f3a, 1.15));
-  const key = new THREE.DirectionalLight(0xffffff, 1.6);
-  key.position.set(2.5, 4, 3.5);
-  scene.add(key);
-  const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
-  const loader = new GLTFLoader();
-  loader.setMeshoptDecoder(MeshoptDecoder);
-  const gltf = await loader.loadAsync("sky.glb");
-  const model = gltf.scene;
-  model.updateMatrixWorld(true);
-  const box = new THREE.Box3();
-  let skinned = false;
-  model.traverse((o) => {
-    if (o.isSkinnedMesh && o.computeBoundingBox) {
-      o.computeBoundingBox();
-      const b = o.boundingBox.clone().applyMatrix4(o.matrixWorld);
-      if (!skinned) { box.copy(b); skinned = true; } else { box.union(b); }
-    }
-  });
-  if (!skinned) box.setFromObject(model);
-  const size = box.getSize(new THREE.Vector3());
-  const centre = box.getCenter(new THREE.Vector3());
-  const group = new THREE.Group();
-  model.position.set(-centre.x, -box.min.y, -centre.z);
-  group.add(model);
-  scene.add(group);
-  const fit = () => {
-    const w = stage.clientWidth, h = stage.clientHeight;
-    renderer.setSize(w, h);
-    camera.aspect = w / h;
-    const dist = (size.y / 2) / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 1.12;
-    camera.position.set(0, size.y * 0.52, dist);
-    camera.lookAt(0, size.y * 0.5, 0);
-    camera.updateProjectionMatrix();
-  };
-  fit();
-  renderer.render(scene, camera);
-  requestAnimationFrame(() => { renderer.domElement.style.opacity = "1"; });
-  new ResizeObserver(fit).observe(stage);
-  let dragAngle = 0, targetDrag = 0, dragging = false, lastX = 0;
-  const el = renderer.domElement;
-  el.addEventListener("pointerdown", (e) => { dragging = true; lastX = e.clientX; el.setPointerCapture(e.pointerId); });
-  el.addEventListener("pointermove", (e) => { if (dragging) { targetDrag += (e.clientX - lastX) * 0.012; lastX = e.clientX; } });
-  el.addEventListener("pointerup", () => { dragging = false; });
-  el.addEventListener("pointercancel", () => { dragging = false; });
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const clock = new THREE.Clock();
-  renderer.setAnimationLoop(() => {
-    if (document.hidden) return;
-    const t = clock.getElapsedTime();
-    dragAngle += (targetDrag - dragAngle) * 0.08;
-    if (reduced) {
-      group.rotation.y = dragAngle;
-    } else {
-      group.rotation.y = dragAngle + Math.sin(t * 0.45) * 0.38;
-      group.position.y = Math.sin(t * 1.25) * size.y * 0.008;
-      group.rotation.z = Math.sin(t * 0.6) * 0.012;
-    }
+// Sky's 3D figure inside the chat panel. Loads lazily the first time the
+// panel opens. Decorative only: if anything fails (no WebGL, model
+// missing) the stage removes itself and the chat works exactly as before.
+let started = false;
+window.initSky3D = async () => {
+  if (started) return;
+  started = true;
+  try {
+    const THREE = await import("three");
+    const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
+    const { MeshoptDecoder } = await import("three/addons/libs/meshopt_decoder.module.js");
+    const stage = document.getElementById("stage");
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.domElement.style.opacity = "0";
+    stage.prepend(renderer.domElement);
+    const scene = new THREE.Scene();
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x2a2f3a, 1.15));
+    const key = new THREE.DirectionalLight(0xffffff, 1.6);
+    key.position.set(2.5, 4, 3.5);
+    scene.add(key);
+    const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+    const loader = new GLTFLoader();
+    loader.setMeshoptDecoder(MeshoptDecoder);
+    const gltf = await loader.loadAsync("sky.glb");
+    const model = gltf.scene;
+    model.updateMatrixWorld(true);
+    const box = new THREE.Box3();
+    let skinned = false;
+    model.traverse((o) => {
+      if (o.isSkinnedMesh && o.computeBoundingBox) {
+        o.computeBoundingBox();
+        const b = o.boundingBox.clone().applyMatrix4(o.matrixWorld);
+        if (!skinned) { box.copy(b); skinned = true; } else { box.union(b); }
+      }
+    });
+    if (!skinned) box.setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const centre = box.getCenter(new THREE.Vector3());
+    const group = new THREE.Group();
+    model.position.set(-centre.x, -box.min.y, -centre.z);
+    group.add(model);
+    scene.add(group);
+    const fit = () => {
+      const w = stage.clientWidth, h = stage.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      const dist = (size.y / 2) / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 1.12;
+      camera.position.set(0, size.y * 0.52, dist);
+      camera.lookAt(0, size.y * 0.5, 0);
+      camera.updateProjectionMatrix();
+    };
+    fit();
     renderer.render(scene, camera);
-  });
-} catch (e) {
-  const stage = document.getElementById("stage");
-  if (stage) stage.remove();
-}
+    requestAnimationFrame(() => { renderer.domElement.style.opacity = "1"; });
+    new ResizeObserver(fit).observe(stage);
+    let dragAngle = 0, targetDrag = 0, dragging = false, lastX = 0;
+    const el = renderer.domElement;
+    el.addEventListener("pointerdown", (e) => { dragging = true; lastX = e.clientX; el.setPointerCapture(e.pointerId); });
+    el.addEventListener("pointermove", (e) => { if (dragging) { targetDrag += (e.clientX - lastX) * 0.012; lastX = e.clientX; } });
+    el.addEventListener("pointerup", () => { dragging = false; });
+    el.addEventListener("pointercancel", () => { dragging = false; });
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const clock = new THREE.Clock();
+    renderer.setAnimationLoop(() => {
+      if (document.hidden) return;
+      const t = clock.getElapsedTime();
+      dragAngle += (targetDrag - dragAngle) * 0.08;
+      if (reduced) {
+        group.rotation.y = dragAngle;
+      } else {
+        group.rotation.y = dragAngle + Math.sin(t * 0.45) * 0.38;
+        group.position.y = Math.sin(t * 1.25) * size.y * 0.008;
+        group.rotation.z = Math.sin(t * 0.6) * 0.012;
+      }
+      renderer.render(scene, camera);
+    });
+  } catch (e) {
+    const stage = document.getElementById("stage");
+    if (stage) stage.remove();
+  }
+};
+if (window.__skyWants3D) window.initSky3D();
 </script>
 </body>
 </html>
