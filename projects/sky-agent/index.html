@@ -41,7 +41,7 @@
   #panel header p { margin: 1px 0 0; font-size: 12px; color: #a7adba; display: flex; align-items: center; gap: 5px; }
   #panel header p i { width: 7px; height: 7px; border-radius: 50%; background: #34d399; display: inline-block; }
   #closeBtn { background: transparent; border: 0; color: #a7adba; font-size: 22px; line-height: 1; cursor: pointer; padding: 4px 6px; }
-  #chat { flex: 1; overflow-y: auto; padding: 14px 12px 6px; display: flex; flex-direction: column; gap: 10px; }
+  #chat { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 14px 12px 6px; display: flex; flex-direction: column; gap: 10px; }
   .row { display: flex; gap: 8px; align-items: flex-end; max-width: 94%; animation: rise .45s cubic-bezier(.2,.8,.3,1) both; }
   .row.agent-row { align-self: flex-start; }
   .row.user-row { align-self: flex-end; flex-direction: row-reverse; }
@@ -65,7 +65,7 @@
   .chip:nth-child(8) { animation-delay: .28s; } .chip:nth-child(9) { animation-delay: .32s; } .chip:nth-child(10) { animation-delay: .36s; }
   .chip:nth-child(11) { animation-delay: .4s; } .chip:nth-child(12) { animation-delay: .44s; }
   form { display: flex; gap: 8px; padding: 10px 12px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #262a33; }
-  input { flex: 1; padding: 11px 14px; border-radius: 999px; border: 1px solid #39404e; background: #161a21; color: #f2f3f5; font-size: 14.5px; min-width: 0; }
+  input { flex: 1; padding: 11px 14px; border-radius: 999px; border: 1px solid #39404e; background: #161a21; color: #f2f3f5; font-size: 16px; min-width: 0; }
   input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.25); }
   button.send { padding: 0 16px; border: 0; border-radius: 999px; background: #2563eb; color: #fff; font-size: 14.5px; cursor: pointer; transition: transform .15s; }
   button.send:active { transform: scale(.94); }
@@ -148,6 +148,18 @@ const chat = document.getElementById("chat");
 const form = document.getElementById("form");
 const input = document.getElementById("input");
 const history = [];
+function renderRich(div, text) {
+  div.textContent = "";
+  String(text).split("\n").forEach((line, i) => {
+    if (i > 0) div.appendChild(document.createElement("br"));
+    const clean = line.replace(/^\s*[\*\-\u2022]\s+/, "\u2022 ");
+    clean.split("**").forEach((part, j) => {
+      if (!part) return;
+      if (j % 2 === 1) { const st = document.createElement("strong"); st.textContent = part; div.appendChild(st); }
+      else div.appendChild(document.createTextNode(part));
+    });
+  });
+}
 function add(text, who) {
   const row = document.createElement("div");
   row.className = "row " + (who === "agent" ? "agent-row" : "user-row");
@@ -161,7 +173,7 @@ function add(text, who) {
   }
   const div = document.createElement("div");
   div.className = "msg " + who;
-  div.textContent = text;
+  if (who === "agent") { renderRich(div, text); } else { div.textContent = text; }
   row.appendChild(div);
   chat.appendChild(row);
   chat.scrollTop = chat.scrollHeight;
@@ -181,7 +193,7 @@ async function ask(text) {
     });
     const data = await res.json();
     const reply = data.reply || "Sorry, I could not answer that. You can reach Sky directly on LinkedIn.";
-    pending.textContent = reply;
+    renderRich(pending, reply);
     history.push({ role: "agent", text: reply });
   } catch (e) {
     pending.textContent = "The chat is not live yet. Please reach Sky on LinkedIn: https://www.linkedin.com/in/gdspahuja/";
