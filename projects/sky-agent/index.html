@@ -13,11 +13,34 @@
   header p { margin: 0; font-size: 13px; color: #a7adba; line-height: 1.45; }
   header a { color: #7db4ff; }
   #chat { flex: 1; overflow-y: auto; padding: 14px 14px 6px; display: flex; flex-direction: column; gap: 10px; }
-  .msg { max-width: 86%; padding: 10px 13px; border-radius: 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
-  .agent { background: #1d2129; align-self: flex-start; border-bottom-left-radius: 4px; }
-  .user { background: #2563eb; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
-  #chips { display: flex; gap: 8px; flex-wrap: wrap; padding: 8px 14px 2px; }
-  .chip { border: 1px solid #39404e; background: transparent; color: #cfd6e4; border-radius: 999px; padding: 7px 12px; font-size: 13px; cursor: pointer; }
+  .row { display: flex; gap: 8px; align-items: flex-end; max-width: 92%; animation: rise .45s cubic-bezier(.2,.8,.3,1) both; }
+  .row.agent-row { align-self: flex-start; }
+  .row.user-row { align-self: flex-end; flex-direction: row-reverse; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex: none; border: 1px solid #39404e; margin-bottom: 2px; }
+  .msg { padding: 10px 13px; border-radius: 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+  .agent { background: #1d2129; border-bottom-left-radius: 4px; }
+  .user { background: #2563eb; color: #fff; border-bottom-right-radius: 4px; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+  .dots { display: inline-flex; gap: 4px; padding: 4px 2px; vertical-align: middle; }
+  .dots span { width: 7px; height: 7px; border-radius: 50%; background: #a7adba; animation: bounce 1.2s infinite ease-in-out; }
+  .dots span:nth-child(2) { animation-delay: .15s; }
+  .dots span:nth-child(3) { animation-delay: .3s; }
+  @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: .45; } 30% { transform: translateY(-4px); opacity: 1; } }
+  .status { display: inline-flex; align-items: center; gap: 6px; }
+  .status i { width: 8px; height: 8px; border-radius: 50%; background: #34d399; display: inline-block; animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(52,211,153,.5); } 70% { box-shadow: 0 0 0 7px rgba(52,211,153,0); } 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); } }
+  #chips { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; padding: 10px 14px 4px; scrollbar-width: none; }
+  #chips::-webkit-scrollbar { display: none; }
+  .chip { border: 1px solid #39404e; background: #161a21; color: #cfd6e4; border-radius: 999px; padding: 7px 12px; font-size: 13px; cursor: pointer; white-space: nowrap; flex: none; animation: rise .5s cubic-bezier(.2,.8,.3,1) both; transition: border-color .2s, background .2s, transform .15s; }
+  .chip:hover { border-color: #2563eb; background: #1d2129; }
+  .chip:active { transform: scale(.96); }
+  .chip:nth-child(2) { animation-delay: .05s; } .chip:nth-child(3) { animation-delay: .1s; } .chip:nth-child(4) { animation-delay: .15s; }
+  .chip:nth-child(5) { animation-delay: .2s; } .chip:nth-child(6) { animation-delay: .25s; } .chip:nth-child(7) { animation-delay: .3s; } .chip:nth-child(8) { animation-delay: .35s; }
+  button.send { transition: transform .15s, background .2s; }
+  button.send:active { transform: scale(.94); }
+  input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.25); }
+  #stage canvas { transition: opacity 1s ease; }
+  @media (prefers-reduced-motion: reduce) { .row, .chip { animation: none; } .dots span, .status i { animation: none; } }
   form { display: flex; gap: 8px; padding: 10px 12px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #262a33; }
   input { flex: 1; padding: 12px 14px; border-radius: 999px; border: 1px solid #39404e; background: #161a21; color: #f2f3f5; font-size: 15px; }
   button.send { padding: 0 18px; border: 0; border-radius: 999px; background: #2563eb; color: #fff; font-size: 15px; cursor: pointer; }
@@ -33,13 +56,18 @@
   <h1>Gagandeep Singh Pahuja &middot; &ldquo;Sky&rdquo;</h1>
   <p>Forward deployed engineering, strategy and innovation &middot; NYU Tandon, MS Management of Technology &rsquo;27 &middot; VP, TechSHRM.
   This is Sky&rsquo;s agent. Ask it anything about his work, his projects, or how to reach him.</p>
+  <p class="status" style="margin-top:6px"><i></i>Online, answers from Sky&rsquo;s verified record</p>
 </header>
 <div id="stage" aria-hidden="true"><div id="stage-hint">Drag to spin</div></div>
 <div id="chat"></div>
 <div id="chips">
-  <button class="chip" type="button">What is Sky building right now?</button>
   <button class="chip" type="button">What roles is he looking for?</button>
+  <button class="chip" type="button">What is Sky building right now?</button>
+  <button class="chip" type="button">Tell me about GUARDIAN</button>
   <button class="chip" type="button">What did he do at TCS?</button>
+  <button class="chip" type="button">Why forward deployed engineering?</button>
+  <button class="chip" type="button">What is his best project?</button>
+  <button class="chip" type="button">What did he do before NYU?</button>
   <button class="chip" type="button">How do I reach him?</button>
 </div>
 <form id="form">
@@ -59,10 +87,21 @@ const form = document.getElementById("form");
 const input = document.getElementById("input");
 const history = [];
 function add(text, who) {
+  const row = document.createElement("div");
+  row.className = "row " + (who === "agent" ? "agent-row" : "user-row");
+  if (who === "agent") {
+    const img = document.createElement("img");
+    img.className = "avatar";
+    img.src = "../../assets/images/linkedin-profile.jpg";
+    img.alt = "";
+    img.onerror = () => img.remove();
+    row.appendChild(img);
+  }
   const div = document.createElement("div");
   div.className = "msg " + who;
   div.textContent = text;
-  chat.appendChild(div);
+  row.appendChild(div);
+  chat.appendChild(row);
   chat.scrollTop = chat.scrollHeight;
   return div;
 }
@@ -70,7 +109,8 @@ add("Hi, I am Sky's agent. I can tell you about his work at NYU and TCS, the pro
 async function ask(text) {
   add(text, "user");
   history.push({ role: "user", text });
-  const pending = add("Thinking\u2026", "agent");
+  const pending = add("", "agent");
+  pending.innerHTML = '<span class="dots"><span></span><span></span><span></span></span>';
   try {
     const res = await fetch(ENDPOINT, {
       method: "POST",
@@ -114,6 +154,7 @@ try {
   const stage = document.getElementById("stage");
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.domElement.style.opacity = "0";
   stage.prepend(renderer.domElement);
   const scene = new THREE.Scene();
   scene.add(new THREE.HemisphereLight(0xffffff, 0x2a2f3a, 1.15));
@@ -153,6 +194,7 @@ try {
   };
   fit();
   renderer.render(scene, camera);
+  requestAnimationFrame(() => { renderer.domElement.style.opacity = "1"; });
   new ResizeObserver(fit).observe(stage);
   let dragAngle = 0, targetDrag = 0, dragging = false, lastX = 0;
   const el = renderer.domElement;
