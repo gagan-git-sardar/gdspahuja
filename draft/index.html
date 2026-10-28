@@ -196,6 +196,15 @@
     .contact-actions .button:first-child{background:var(--paper);color:var(--ink)}
     footer{border-top:1px solid var(--line);padding:1.4rem 0 2rem;color:var(--muted);font-size:.9rem}
     .footer-row{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+    .scroll-progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--violet),var(--gold));z-index:40}
+    .audience{margin-top:2.2rem;border-top:1px solid var(--line);padding-top:1.4rem}
+    .audience-buttons{display:flex;flex-wrap:wrap;gap:.55rem}
+    .audience-btn{border:1px solid var(--line);background:rgba(255,250,241,.7);border-radius:999px;padding:.55rem .95rem;font-weight:600;font-size:.9rem;cursor:pointer;font-family:inherit;color:var(--ink);transition:.2s ease}
+    .audience-btn:hover{border-color:var(--violet);color:var(--violet)}
+    .audience-btn[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+    .audience-note{margin:.9rem 0 0;color:var(--ink-2);max-width:560px;min-height:1.2em}
+    .flash{animation:flashRing 2.2s ease}
+    @keyframes flashRing{0%{box-shadow:inset 0 0 0 0 rgba(87,6,140,0)}18%{box-shadow:inset 0 0 0 3px rgba(87,6,140,.5)}70%{box-shadow:inset 0 0 0 3px rgba(87,6,140,.28)}100%{box-shadow:inset 0 0 0 0 rgba(87,6,140,0)}}
     .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease, transform .7s ease}
     .reveal.visible{opacity:1;transform:none}
     @media (max-width: 980px){
@@ -238,6 +247,7 @@
   </style>
 </head>
 <body>
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="topbar">
     <div class="shell nav" aria-label="Main navigation">
@@ -276,6 +286,15 @@
             <span>London, Paris and New York</span>
             <span>Ex-DevOps, TCS</span>
           </div>
+          <div class="audience" aria-label="Choose your path through this page">
+            <p class="eyebrow" style="margin-bottom:.7rem">Start where you are</p>
+            <div class="audience-buttons">
+              <button type="button" class="audience-btn" data-target="#work" data-note="The short version: Selected Work shows what I have built and deployed, with the outcomes to judge it by." aria-pressed="false">I am hiring for FDE roles</button>
+              <button type="button" class="audience-btn" data-target="#experience" data-note="Start with Experience: production systems and pipelines at TCS, then the deployed builds in Selected Work." aria-pressed="false">I am on an engineering team</button>
+              <button type="button" class="audience-btn" data-target="#about" data-note="Start with How I Deploy: discovery with real users, prototyping against actual workflows, and adoption after launch." aria-pressed="false">I am a customer or operator</button>
+            </div>
+            <p class="audience-note" id="audience-note" aria-live="polite"></p>
+          </div>
         </div>
         <div class="portrait-wrap reveal visible">
           <div class="portrait-card">
@@ -295,12 +314,12 @@
 
     <div class="proof" aria-label="Selected proof points">
       <div class="shell proof-grid">
-        <div class="proof-item"><strong>5,295</strong><span>LinkedIn followers, checked 27 October 2026</span></div>
-        <div class="proof-item"><strong>50+</strong><span>students placed through UG Solutions partner accounts</span></div>
-        <div class="proof-item"><strong>100+</strong><span>users and peers included in venture research</span></div>
-        <div class="proof-item"><strong>91%</strong><span>accuracy from the London property price model I led</span></div>
-        <div class="proof-item"><strong>5</strong><span>industry leaders hosted on my first NYU panel</span></div>
-        <div class="proof-item"><strong>3</strong><span>global classrooms: London, Paris and New York</span></div>
+        <div class="proof-item"><strong data-count="5295" data-format="comma">5,295</strong><span>LinkedIn followers, checked 27 October 2026</span></div>
+        <div class="proof-item"><strong data-count="50" data-suffix="+">50+</strong><span>students placed through UG Solutions partner accounts</span></div>
+        <div class="proof-item"><strong data-count="100" data-suffix="+">100+</strong><span>users and peers included in venture research</span></div>
+        <div class="proof-item"><strong data-count="91" data-suffix="%">91%</strong><span>accuracy from the London property price model I led</span></div>
+        <div class="proof-item"><strong data-count="5">5</strong><span>industry leaders hosted on my first NYU panel</span></div>
+        <div class="proof-item"><strong data-count="3">3</strong><span>global classrooms: London, Paris and New York</span></div>
       </div>
     </div>
 
@@ -641,6 +660,63 @@
     }
     const year = document.querySelector('#year');
     if (year) year.textContent = new Date().getFullYear();
+    const progress = document.querySelector('#scroll-progress');
+    if (progress) {
+      const setProgress = () => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+      };
+      window.addEventListener('scroll', setProgress, { passive: true });
+      setProgress();
+    }
+    const counters = document.querySelectorAll('.proof-item strong[data-count]');
+    const formatCount = (el, value) => {
+      const suffix = el.dataset.suffix || '';
+      const text = el.dataset.format === 'comma' ? Math.round(value).toLocaleString('en-US') : String(Math.round(value));
+      return text + suffix;
+    };
+    const runCounter = (el) => {
+      const target = parseFloat(el.dataset.count);
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        el.textContent = formatCount(el, target);
+        return;
+      }
+      const start = performance.now();
+      const duration = 1100;
+      const tick = (now) => {
+        const t = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = formatCount(el, target * eased);
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    if (counters.length && 'IntersectionObserver' in window) {
+      const counterObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            runCounter(entry.target);
+            counterObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.4 });
+      counters.forEach(el => counterObserver.observe(el));
+    }
+    const audienceNote = document.querySelector('#audience-note');
+    document.querySelectorAll('.audience-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.audience-btn').forEach(b => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+        if (audienceNote) audienceNote.textContent = btn.dataset.note || '';
+        const target = document.querySelector(btn.dataset.target);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          target.classList.remove('flash');
+          setTimeout(() => target.classList.add('flash'), 450);
+          setTimeout(() => target.classList.remove('flash'), 2900);
+        }
+      });
+    });
     const revealItems = document.querySelectorAll('.reveal');
     if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver(entries => {
