@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gagandeep Singh Pahuja | Forward Deployed Engineering, AI and Production Systems</title>
-  <meta name="description" content="Portfolio draft for Gagandeep Singh Pahuja (Sky): NYU Tandon Management of Technology candidate with a DevOps engineering background, focused on forward deployed engineering: building and deploying AI products with the people who use them.">
-  <meta property="og:title" content="Gagandeep Singh Pahuja | Forward Deployed Engineering, AI and Production Systems">
+  <title>Gagandeep Singh Pahuja | Forward Deployed Engineering, Strategy and Innovation</title>
+  <meta name="description" content="Portfolio draft for Gagandeep Singh Pahuja (Sky): NYU Tandon Management of Technology candidate with a DevOps engineering background, focused on forward deployed engineering, strategy and innovation: deploying AI products with the people who use them.">
+  <meta property="og:title" content="Gagandeep Singh Pahuja | Forward Deployed Engineering, Strategy and Innovation">
   <meta property="og:description" content="I build and deploy technology with the people who use it.">
   <meta property="og:image" content="../assets/images/linkedin-profile.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -196,15 +196,19 @@
     .contact-actions .button:first-child{background:var(--paper);color:var(--ink)}
     footer{border-top:1px solid var(--line);padding:1.4rem 0 2rem;color:var(--muted);font-size:.9rem}
     .footer-row{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-    .scroll-progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--violet),var(--gold));z-index:40}
     .audience{margin-top:2.2rem;border-top:1px solid var(--line);padding-top:1.4rem}
     .audience-buttons{display:flex;flex-wrap:wrap;gap:.55rem}
     .audience-btn{border:1px solid var(--line);background:rgba(255,250,241,.7);border-radius:999px;padding:.55rem .95rem;font-weight:600;font-size:.9rem;cursor:pointer;font-family:inherit;color:var(--ink);transition:.2s ease}
     .audience-btn:hover{border-color:var(--violet);color:var(--violet)}
     .audience-btn[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
     .audience-note{margin:.9rem 0 0;color:var(--ink-2);max-width:560px;min-height:1.2em}
-    .flash{animation:flashRing 2.2s ease}
-    @keyframes flashRing{0%{box-shadow:inset 0 0 0 0 rgba(87,6,140,0)}18%{box-shadow:inset 0 0 0 3px rgba(87,6,140,.5)}70%{box-shadow:inset 0 0 0 3px rgba(87,6,140,.28)}100%{box-shadow:inset 0 0 0 0 rgba(87,6,140,0)}}
+    .repo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+    .repo-card{background:rgba(255,250,241,.78);border:1px solid var(--line);border-radius:var(--radius);padding:1.7rem;display:flex;flex-direction:column;gap:.5rem}
+    .repo-card h3{font-size:1.3rem;font-weight:560}
+    .repo-card h3 a{text-decoration:none}
+    .repo-card h3 a:hover{color:var(--violet)}
+    .repo-card p{color:var(--ink-2);margin:0;font-size:.95rem}
+    .repo-meta{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:auto}
     .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease, transform .7s ease}
     .reveal.visible{opacity:1;transform:none}
     @media (max-width: 980px){
@@ -215,7 +219,7 @@
       .pathways,.principle-grid,.journey{grid-template-columns:1fr}
       .work-card{grid-template-columns:70px 1fr}
       .outcome{grid-column:2;border-left:0;border-top:1px solid var(--line);padding:1rem 0 0}
-      .contact-card,.voice-grid,.hero-grid,.section-head,.story-grid,.two-col,.posts-grid{grid-template-columns:1fr}
+      .contact-card,.voice-grid,.hero-grid,.section-head,.story-grid,.two-col,.posts-grid,.repo-grid{grid-template-columns:1fr}
       .story-sticky{position:static}
       .quote-card{position:relative;left:auto;bottom:auto;margin-top:1rem;max-width:none}
     }
@@ -247,7 +251,6 @@
   </style>
 </head>
 <body>
-  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="topbar">
     <div class="shell nav" aria-label="Main navigation">
@@ -271,9 +274,9 @@
     <section class="hero" id="top">
       <div class="shell hero-grid">
         <div class="reveal visible">
-          <p class="eyebrow">Forward Deployed Engineering · AI Products and Production Systems</p>
+          <p class="eyebrow">Forward Deployed Engineering · Strategy, Innovation and AI Products</p>
           <h1>I build and deploy technology <em>with the people who use it.</em></h1>
-          <p class="hero-lede">I am <strong>Gagandeep Singh Pahuja</strong>, an NYU Tandon Management of Technology candidate with a DevOps engineering background. I have kept production systems alive, shipped products side by side with customers, and founded ventures end to end. I now lead from the deployment side: between customers and engineering, until the technology works in the real world.</p>
+          <p class="hero-lede">I am <strong>Gagandeep Singh Pahuja</strong>, an NYU Tandon Management of Technology candidate with a DevOps engineering background. I have kept production systems alive, shipped products side by side with customers, and founded ventures end to end. My focus is the deployment side of strategy and innovation: between customers and engineering, until the technology works in the real world.</p>
           <div class="hero-actions">
             <a class="button primary" href="#work">See the work</a>
             <a class="button secondary" href="https://www.linkedin.com/in/gdspahuja/" target="_blank" rel="noreferrer">Connect on LinkedIn</a>
@@ -314,12 +317,12 @@
 
     <div class="proof" aria-label="Selected proof points">
       <div class="shell proof-grid">
-        <div class="proof-item"><strong data-count="5295" data-format="comma">5,295</strong><span>LinkedIn followers, checked 27 October 2026</span></div>
-        <div class="proof-item"><strong data-count="50" data-suffix="+">50+</strong><span>students placed through UG Solutions partner accounts</span></div>
-        <div class="proof-item"><strong data-count="100" data-suffix="+">100+</strong><span>users and peers included in venture research</span></div>
-        <div class="proof-item"><strong data-count="91" data-suffix="%">91%</strong><span>accuracy from the London property price model I led</span></div>
-        <div class="proof-item"><strong data-count="5">5</strong><span>industry leaders hosted on my first NYU panel</span></div>
-        <div class="proof-item"><strong data-count="3">3</strong><span>global classrooms: London, Paris and New York</span></div>
+        <div class="proof-item"><strong>5,295</strong><span>LinkedIn followers, checked 27 October 2026</span></div>
+        <div class="proof-item"><strong>50+</strong><span>students placed through UG Solutions partner accounts</span></div>
+        <div class="proof-item"><strong>100+</strong><span>users and peers included in venture research</span></div>
+        <div class="proof-item"><strong>91%</strong><span>accuracy from the London property price model I led</span></div>
+        <div class="proof-item"><strong>5</strong><span>industry leaders hosted on my first NYU panel</span></div>
+        <div class="proof-item"><strong>3</strong><span>global classrooms: London, Paris and New York</span></div>
       </div>
     </div>
 
@@ -444,6 +447,21 @@
             </div>
             <div class="outcome"><span>Outcome</span><strong>50+ students placed across 10+ B2B startup partner accounts.</strong></div>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="buildlog" style="padding-top:20px">
+      <div class="shell">
+        <div class="section-head reveal">
+          <div>
+            <p class="section-kicker">Building in the open</p>
+            <h2>Innovation you can <em>click, not just read.</em></h2>
+          </div>
+          <p class="section-intro">My most recently updated builds, pulled live from GitHub every time this page loads. If it is here, it exists.</p>
+        </div>
+        <div class="repo-grid" id="repo-grid">
+          <p class="section-intro">Loading the latest builds…</p>
         </div>
       </div>
     </section>
@@ -626,7 +644,7 @@
         <div>
           <p class="section-kicker" style="color:#d8bfff">What is next</p>
           <h2>Let us talk about the deployment, the role or <em>the team you are building.</em></h2>
-          <p>I am preparing for forward deployed and deployment-focused roles starting in 2027, and I am always glad to talk about deploying AI products, production systems and the last mile between a demo and a working system.</p>
+          <p>I am preparing for forward deployed and deployment-focused roles starting in 2027, and I am always glad to talk strategy, innovation and the last mile between a demo and a working system.</p>
         </div>
         <div class="contact-actions">
           <a class="button" href="https://www.linkedin.com/in/gdspahuja/" target="_blank" rel="noreferrer">Connect on LinkedIn</a>
@@ -640,7 +658,7 @@
   <footer>
     <div class="shell footer-row">
       <span>© <span id="year">2026</span> Gagandeep Singh Pahuja</span>
-      <span>First portfolio redesign draft · Built for review</span>
+      <span>First portfolio redesign draft · <span id="last-updated">Kept current automatically</span></span>
       <span><a href="#top">Back to top</a></span>
     </div>
   </footer>
@@ -660,48 +678,6 @@
     }
     const year = document.querySelector('#year');
     if (year) year.textContent = new Date().getFullYear();
-    const progress = document.querySelector('#scroll-progress');
-    if (progress) {
-      const setProgress = () => {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
-      };
-      window.addEventListener('scroll', setProgress, { passive: true });
-      setProgress();
-    }
-    const counters = document.querySelectorAll('.proof-item strong[data-count]');
-    const formatCount = (el, value) => {
-      const suffix = el.dataset.suffix || '';
-      const text = el.dataset.format === 'comma' ? Math.round(value).toLocaleString('en-US') : String(Math.round(value));
-      return text + suffix;
-    };
-    const runCounter = (el) => {
-      const target = parseFloat(el.dataset.count);
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        el.textContent = formatCount(el, target);
-        return;
-      }
-      const start = performance.now();
-      const duration = 1100;
-      const tick = (now) => {
-        const t = Math.min((now - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - t, 3);
-        el.textContent = formatCount(el, target * eased);
-        if (t < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    };
-    if (counters.length && 'IntersectionObserver' in window) {
-      const counterObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            runCounter(entry.target);
-            counterObserver.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.4 });
-      counters.forEach(el => counterObserver.observe(el));
-    }
     const audienceNote = document.querySelector('#audience-note');
     document.querySelectorAll('.audience-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -709,14 +685,54 @@
         btn.setAttribute('aria-pressed', 'true');
         if (audienceNote) audienceNote.textContent = btn.dataset.note || '';
         const target = document.querySelector(btn.dataset.target);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          target.classList.remove('flash');
-          setTimeout(() => target.classList.add('flash'), 450);
-          setTimeout(() => target.classList.remove('flash'), 2900);
-        }
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
+    const repoGrid = document.querySelector('#repo-grid');
+    if (repoGrid && 'fetch' in window) {
+      const fmtDate = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      fetch('https://api.github.com/users/gagan-git-sardar/repos?sort=updated&per_page=3')
+        .then(r => { if (!r.ok) throw new Error('github'); return r.json(); })
+        .then(repos => {
+          repoGrid.innerHTML = '';
+          repos.forEach(repo => {
+            const card = document.createElement('article');
+            card.className = 'repo-card reveal visible';
+            const title = document.createElement('h3');
+            const link = document.createElement('a');
+            link.href = repo.html_url;
+            link.target = '_blank';
+            link.rel = 'noreferrer';
+            link.textContent = repo.name;
+            title.appendChild(link);
+            const desc = document.createElement('p');
+            desc.textContent = repo.description || 'A build in progress, documented in the repository.';
+            const meta = document.createElement('span');
+            meta.className = 'repo-meta';
+            meta.textContent = (repo.language ? repo.language + ' · ' : '') + 'Updated ' + fmtDate(repo.updated_at);
+            card.appendChild(title);
+            card.appendChild(desc);
+            card.appendChild(meta);
+            repoGrid.appendChild(card);
+          });
+          if (!repos.length) throw new Error('empty');
+        })
+        .catch(() => {
+          repoGrid.innerHTML = '<article class="repo-card reveal visible"><h3><a href="https://github.com/gagan-git-sardar" target="_blank" rel="noreferrer">github.com/gagan-git-sardar</a></h3><p>All builds and project code live on GitHub.</p><span class="repo-meta">View the repositories</span></article>';
+        });
+    }
+    const lastUpdated = document.querySelector('#last-updated');
+    if (lastUpdated && 'fetch' in window) {
+      fetch('https://api.github.com/repos/gagan-git-sardar/gdspahuja/commits?per_page=1')
+        .then(r => { if (!r.ok) throw new Error('github'); return r.json(); })
+        .then(commits => {
+          if (commits.length) {
+            const d = new Date(commits[0].commit.committer.date);
+            lastUpdated.textContent = 'Last updated ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+          }
+        })
+        .catch(() => {});
+    }
     const revealItems = document.querySelectorAll('.reveal');
     if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver(entries => {
