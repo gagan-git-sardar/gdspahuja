@@ -466,9 +466,9 @@
             <p>Every meeting becomes notes and action items that get tracked, not forgotten.</p>
           </article>
           <article class="path-card reveal">
-            <span class="index">Tripo and Mixamo</span>
-            <h3>The avatar</h3>
-            <p>The 3D figure on my agent page: AI-generated, rigged, compressed from 8 MB to under 1 MB, and shipped by me.</p>
+            <span class="index">Claude and Grok</span>
+            <h3>The other lenses</h3>
+            <p>Drafts, strategy and arguments get read by more than one model before I trust them. Claude and Grok are part of that rotation, each with a different blind spot.</p>
           </article>
         </div>
       </div>
@@ -743,5 +743,161 @@
       revealItems.forEach(item => item.classList.add('visible'));
     }
   </script>
+
+<style>
+  #skyLauncher { position: fixed; right: 20px; bottom: 20px; width: 62px; height: 62px; border-radius: 50%; border: 2px solid #39404e; padding: 0; cursor: pointer; background: #161a21; overflow: visible; z-index: 9990; box-shadow: 0 10px 30px rgba(15,17,21,.45); transition: transform .15s; font-family: Inter, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  #skyLauncher:active { transform: scale(.93); }
+  #skyLauncher img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+  #skyLauncher i { position: absolute; right: 1px; top: 1px; width: 14px; height: 14px; border-radius: 50%; background: #34d399; border: 2px solid #fff8ee; }
+  #skyLauncher .sky-tag { position: absolute; right: 74px; top: 50%; transform: translateY(-50%); white-space: nowrap; background: #1d2129; border: 1px solid #39404e; color: #cfd6e4; font-size: 13px; padding: 7px 12px; border-radius: 999px; }
+  #skyPanel { position: fixed; right: 20px; bottom: 96px; width: min(384px, calc(100vw - 24px)); height: min(620px, calc(100dvh - 116px)); background: #10131a; color: #f2f3f5; border: 1px solid #2b303d; border-radius: 22px; box-shadow: 0 24px 60px rgba(15,17,21,.5); display: flex; flex-direction: column; overflow: hidden; z-index: 9991; opacity: 0; transform: translateY(14px) scale(.97); transform-origin: bottom right; pointer-events: none; transition: opacity .25s ease, transform .25s cubic-bezier(.2,.8,.3,1); font-family: Inter, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  #skyPanel.open { opacity: 1; transform: none; pointer-events: auto; }
+  #skyPanel header { padding: 12px 14px; border-bottom: 1px solid #262a33; display: flex; align-items: center; gap: 10px; background: #14171f; }
+  #skyPanel header img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1px solid #39404e; }
+  #skyPanel header .who { flex: 1; min-width: 0; }
+  #skyPanel header h2 { font-size: 15px; margin: 0; color: #f2f3f5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #skyPanel header p { margin: 1px 0 0; font-size: 12px; color: #a7adba; display: flex; align-items: center; gap: 5px; }
+  #skyPanel header p i { width: 7px; height: 7px; border-radius: 50%; background: #34d399; display: inline-block; }
+  #skyClose { background: transparent; border: 0; color: #a7adba; font-size: 22px; line-height: 1; cursor: pointer; padding: 4px 6px; }
+  #skyChat { flex: 1; overflow-y: auto; padding: 14px 12px 6px; display: flex; flex-direction: column; gap: 10px; }
+  #skyPanel .sky-row { display: flex; gap: 8px; align-items: flex-end; max-width: 94%; animation: skyRise .45s cubic-bezier(.2,.8,.3,1) both; }
+  #skyPanel .sky-agent-row { align-self: flex-start; }
+  #skyPanel .sky-user-row { align-self: flex-end; flex-direction: row-reverse; }
+  #skyPanel .sky-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; flex: none; border: 1px solid #39404e; margin-bottom: 2px; }
+  #skyPanel .sky-msg { padding: 9px 12px; border-radius: 16px; font-size: 14.5px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+  #skyPanel .sky-agent-msg { background: #1d2129; border-bottom-left-radius: 4px; }
+  #skyPanel .sky-user-msg { background: #2563eb; color: #fff; border-bottom-right-radius: 4px; }
+  @keyframes skyRise { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+  #skyPanel .sky-dots { display: inline-flex; gap: 4px; padding: 4px 2px; vertical-align: middle; }
+  #skyPanel .sky-dots span { width: 7px; height: 7px; border-radius: 50%; background: #a7adba; animation: skyBounce 1.2s infinite ease-in-out; }
+  #skyPanel .sky-dots span:nth-child(2) { animation-delay: .15s; }
+  #skyPanel .sky-dots span:nth-child(3) { animation-delay: .3s; }
+  @keyframes skyBounce { 0%, 60%, 100% { transform: translateY(0); opacity: .45; } 30% { transform: translateY(-4px); opacity: 1; } }
+  #skyChips { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; padding: 10px 12px 4px; scrollbar-width: none; }
+  #skyChips::-webkit-scrollbar { display: none; }
+  #skyPanel .sky-chip { border: 1px solid #39404e; background: #161a21; color: #cfd6e4; border-radius: 999px; padding: 7px 12px; font-size: 12.5px; cursor: pointer; white-space: nowrap; flex: none; transition: border-color .2s, background .2s, transform .15s; font-family: inherit; }
+  #skyPanel .sky-chip:hover { border-color: #2563eb; background: #1d2129; }
+  #skyPanel .sky-chip:active { transform: scale(.96); }
+  #skyForm { display: flex; gap: 8px; padding: 10px 12px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #262a33; margin: 0; }
+  #skyInput { flex: 1; padding: 11px 14px; border-radius: 999px; border: 1px solid #39404e; background: #161a21; color: #f2f3f5; font-size: 14.5px; min-width: 0; font-family: inherit; }
+  #skyInput:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.25); }
+  #skyForm button.send { padding: 0 16px; border: 0; border-radius: 999px; background: #2563eb; color: #fff; font-size: 14.5px; cursor: pointer; font-family: inherit; }
+  #skyPanel footer { padding: 0 12px 9px; font-size: 11px; color: #7c8494; text-align: center; background: transparent; }
+  #skyPanel footer a { color: #7db4ff; }
+  @media (prefers-reduced-motion: reduce) { #skyPanel .sky-row { animation: none; } #skyPanel .sky-dots span { animation: none; } #skyPanel { transition: none; } }
+</style>
+
+<button id="skyLauncher" type="button" aria-label="Open chat with Sky's agent">
+  <img src="assets/images/linkedin-profile.jpg" alt="">
+  <span class="sky-tag">Ask about Sky</span>
+  <i></i>
+</button>
+
+<section id="skyPanel" aria-label="Chat with Sky's agent">
+  <header>
+    <img src="assets/images/linkedin-profile.jpg" alt="">
+    <div class="who">
+      <h2>Sky&rsquo;s agent</h2>
+      <p><i></i>Online &middot; answers from his verified record</p>
+    </div>
+    <button id="skyClose" type="button" aria-label="Close chat">&times;</button>
+  </header>
+  <div id="skyChat"></div>
+  <div id="skyChips">
+    <button class="sky-chip" type="button">What roles is he looking for?</button>
+    <button class="sky-chip" type="button">What is Sky building right now?</button>
+    <button class="sky-chip" type="button">Tell me about GUARDIAN</button>
+    <button class="sky-chip" type="button">What did he do at TCS?</button>
+    <button class="sky-chip" type="button">Why forward deployed engineering?</button>
+    <button class="sky-chip" type="button">What is his best project?</button>
+    <button class="sky-chip" type="button">What did he do before NYU?</button>
+    <button class="sky-chip" type="button">Does Sky know SQL?</button>
+    <button class="sky-chip" type="button">What certifications does he have?</button>
+    <button class="sky-chip" type="button">What tools and skills does he use?</button>
+    <button class="sky-chip" type="button">What AI tools does Sky use?</button>
+    <button class="sky-chip" type="button">Has he founded anything?</button>
+    <button class="sky-chip" type="button">How do I reach him?</button>
+  </div>
+  <form id="skyForm">
+    <input id="skyInput" type="text" placeholder="Ask about Sky&hellip;" autocomplete="off" maxlength="500">
+    <button class="send" type="submit">Send</button>
+  </form>
+  <footer>Prefer the human? <a href="https://www.linkedin.com/in/gdspahuja/">Connect on LinkedIn</a></footer>
+</section>
+
+<script>
+(function () {
+  var ENDPOINT = "https://sky-agent-proxy.gsp10009.workers.dev/chat";
+  var IMG = "assets/images/linkedin-profile.jpg";
+  var panel = document.getElementById("skyPanel");
+  var launcher = document.getElementById("skyLauncher");
+  var chat = document.getElementById("skyChat");
+  var form = document.getElementById("skyForm");
+  var input = document.getElementById("skyInput");
+  var history = [];
+  var opened = false;
+  function setPanel(open) {
+    panel.classList.toggle("open", open);
+    if (open && !opened) {
+      opened = true;
+      var tag = launcher.querySelector(".sky-tag");
+      if (tag) tag.style.display = "none";
+    }
+  }
+  window.openSkyAgent = function () { setPanel(true); };
+  launcher.addEventListener("click", function () { setPanel(!panel.classList.contains("open")); });
+  document.getElementById("skyClose").addEventListener("click", function () { setPanel(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") setPanel(false); });
+  document.querySelectorAll('a[href$="projects/sky-agent/"]').forEach(function (a) {
+    a.addEventListener("click", function (e) { e.preventDefault(); setPanel(true); });
+  });
+  function add(text, who) {
+    var row = document.createElement("div");
+    row.className = "sky-row " + (who === "agent" ? "sky-agent-row" : "sky-user-row");
+    if (who === "agent") {
+      var img = document.createElement("img");
+      img.className = "sky-avatar";
+      img.src = IMG;
+      img.alt = "";
+      img.onerror = function () { img.remove(); };
+      row.appendChild(img);
+    }
+    var div = document.createElement("div");
+    div.className = "sky-msg " + (who === "agent" ? "sky-agent-msg" : "sky-user-msg");
+    div.textContent = text;
+    row.appendChild(div);
+    chat.appendChild(row);
+    chat.scrollTop = chat.scrollHeight;
+    return div;
+  }
+  add("Hi, I am Sky's agent. I can tell you about his work at NYU and TCS, the products he is building, his skills and certifications, and the roles he is looking for. What would you like to know?", "agent");
+  async function ask(text) {
+    add(text, "user");
+    history.push({ role: "user", text: text });
+    var pending = add("", "agent");
+    pending.innerHTML = '<span class="sky-dots"><span></span><span></span><span></span></span>';
+    try {
+      var res = await fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: history }) });
+      var data = await res.json();
+      var reply = data.reply || "Sorry, I could not answer that. You can reach Sky directly on LinkedIn.";
+      pending.textContent = reply;
+      history.push({ role: "agent", text: reply });
+    } catch (e) {
+      pending.textContent = "The chat is not live yet. Please reach Sky on LinkedIn: https://www.linkedin.com/in/gdspahuja/";
+    }
+    chat.scrollTop = chat.scrollHeight;
+  }
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var text = input.value.trim();
+    if (!text) return;
+    input.value = "";
+    ask(text);
+  });
+  panel.querySelectorAll(".sky-chip").forEach(function (chip) {
+    chip.addEventListener("click", function () { ask(chip.textContent); });
+  });
+})();
+</script>
 </body>
 </html>
