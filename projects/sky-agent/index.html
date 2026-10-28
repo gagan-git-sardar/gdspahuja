@@ -99,8 +99,8 @@ document.querySelectorAll(".chip").forEach((chip) => {
 </script>
 <script type="importmap">
 { "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  "three": "./vendor/three.module.min.js",
+  "three/addons/": "./vendor/addons/"
 } }
 </script>
 <script type="module">
@@ -125,7 +125,17 @@ try {
   loader.setMeshoptDecoder(MeshoptDecoder);
   const gltf = await loader.loadAsync("sky.glb");
   const model = gltf.scene;
-  const box = new THREE.Box3().setFromObject(model);
+  model.updateMatrixWorld(true);
+  const box = new THREE.Box3();
+  let skinned = false;
+  model.traverse((o) => {
+    if (o.isSkinnedMesh && o.computeBoundingBox) {
+      o.computeBoundingBox();
+      const b = o.boundingBox.clone().applyMatrix4(o.matrixWorld);
+      if (!skinned) { box.copy(b); skinned = true; } else { box.union(b); }
+    }
+  });
+  if (!skinned) box.setFromObject(model);
   const size = box.getSize(new THREE.Vector3());
   const centre = box.getCenter(new THREE.Vector3());
   const group = new THREE.Group();
@@ -142,6 +152,7 @@ try {
     camera.updateProjectionMatrix();
   };
   fit();
+  renderer.render(scene, camera);
   new ResizeObserver(fit).observe(stage);
   let dragAngle = 0, targetDrag = 0, dragging = false, lastX = 0;
   const el = renderer.domElement;
