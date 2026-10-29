@@ -132,6 +132,8 @@
     .tool-logo.sm{width:30px;height:30px;flex:0 0 30px;border-radius:8px}
     .tool-word.sm{height:30px;font-size:.72rem;padding:0 .55rem;border-radius:8px}
     .tool-word.serif{font-family:Georgia,'Times New Roman',serif;font-weight:700;letter-spacing:.05em}
+    .work-media{margin:0 0 1.15rem;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+    .work-media img{display:block;width:100%;height:auto}
     .tool-logo.sm img{max-width:24px;max-height:24px;display:block}
     .cred-main{display:flex;align-items:center;gap:.6rem;min-width:0}
     .path-card h3,.principle h3{font-size:1.65rem;margin:.8rem 0 .65rem;font-weight:560}
@@ -399,9 +401,11 @@
           <article class="work-card reveal">
             <div class="work-no">01</div>
             <div>
+              <figure class="work-media"><img src="assets/images/project-property.jpg" alt="London Property Insights: London boroughs shaded by predicted property price, with year and property type filters" width="1280" height="960" loading="lazy"></figure>
               <p class="role">Machine learning · Built and deployed</p>
               <h3>London Property Price Predictor</h3>
               <p>I led a four-person team building an end-to-end machine learning pipeline for London property prices. The final LightGBM model, tuned with Optuna, used custom geospatial features and shipped as a live web app on Vercel.</p>
+              <p><a class="text-link" href="https://website-final-pi.vercel.app/" target="_blank" rel="noreferrer">Explore the live app</a></p>
               <div class="tags"><span>LightGBM</span><span>Optuna</span><span>Geospatial features</span><span>Vercel</span></div>
             </div>
             <div class="outcome"><span>Model result</span><strong>91% accuracy, with a mean absolute error of 10.94%.</strong></div>
