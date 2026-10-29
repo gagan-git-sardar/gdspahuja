@@ -134,6 +134,9 @@
     .tool-word.serif{font-family:Georgia,'Times New Roman',serif;font-weight:700;letter-spacing:.05em}
     .work-media{margin:0 0 1.15rem;border:1px solid var(--line);border-radius:16px;overflow:hidden}
     .work-media img{display:block;width:100%;height:auto}
+    .work-media.compact{max-width:480px}
+    .work-media iframe{display:block;width:100%;height:440px;border:0}
+    @media (max-width:720px){.work-media iframe{height:340px}}
     .tool-logo.sm img{max-width:24px;max-height:24px;display:block}
     .cred-main{display:flex;align-items:center;gap:.6rem;min-width:0}
     .path-card h3,.principle h3{font-size:1.65rem;margin:.8rem 0 .65rem;font-weight:560}
@@ -409,7 +412,7 @@
           <article class="work-card reveal">
             <div class="work-no">01</div>
             <div>
-              <figure class="work-media"><img src="assets/images/project-property.jpg" alt="London Property Insights: London boroughs shaded by predicted property price, with year and property type filters" width="1280" height="960" loading="lazy"></figure>
+              <figure class="work-media compact"><img src="assets/images/project-property.jpg" alt="London Property Insights: London boroughs shaded by predicted property price, with year and property type filters" width="1280" height="960" loading="lazy"></figure>
               <p class="role">Machine learning · Built and deployed</p>
               <h3>London Property Price Predictor</h3>
               <p>I led a four-person team building an end-to-end machine learning pipeline for London property prices. The final LightGBM model, tuned with Optuna, used custom geospatial features and shipped as a live web app on Vercel.</p>
@@ -456,7 +459,7 @@
           <article class="work-card reveal">
             <div class="work-no">05</div>
             <div>
-              <figure class="work-media"><img src="assets/images/project-tube.jpg" alt="TfL Tube Visualization: a live map of the London Underground, with Tube lines drawn across London, station circles sized by busyness and a Tube Lines legend" width="1200" height="750" loading="lazy"></figure>
+              <figure class="work-media"><iframe src="https://tube-kappa-bay.vercel.app/" title="Live TfL Tube Visualization: the London Underground map, animated with moving trains" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></figure>
               <p class="role">Data visualisation · TfL open data</p>
               <h3>TfL Tube Visualization</h3>
               <p>For a data visualisation final, Farjad and I built a working simulation of the London Underground from TfL open data. All 272 stations and 87 routes are in: each station is drawn as a circle sized by its passenger footfall, and each line's thickness follows how frequently trains run on that segment, so the busiest arteries of the network read at a glance.</p>
