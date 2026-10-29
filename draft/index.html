@@ -456,6 +456,7 @@
           <article class="work-card reveal">
             <div class="work-no">05</div>
             <div>
+              <figure class="work-media"><img src="../assets/images/project-tube.jpg" alt="TfL Tube Visualization: a live map of the London Underground, with Tube lines drawn across London, station circles sized by busyness and a Tube Lines legend" width="1200" height="750" loading="lazy"></figure>
               <p class="role">Data visualisation · TfL open data</p>
               <h3>TfL Tube Visualization</h3>
               <p>For a data visualisation final, Farjad and I built a working simulation of the London Underground from TfL open data. All 272 stations and 87 routes are in: each station is drawn as a circle sized by its passenger footfall, and each line's thickness follows how frequently trains run on that segment, so the busiest arteries of the network read at a glance.</p>
@@ -464,21 +465,6 @@
             </div>
             <div class="outcome"><span>The demo</span><strong>272 stations and 87 routes, animated from TfL data.</strong></div>
           </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="buildlog" style="padding-top:20px">
-      <div class="shell">
-        <div class="section-head reveal">
-          <div>
-            <p class="section-kicker">Building in the open</p>
-            <h2>Innovation you can <em>click, not just read.</em></h2>
-          </div>
-          <p class="section-intro">My most recently updated builds, pulled live from GitHub every time this page loads. If it is here, it exists.</p>
-        </div>
-        <div class="repo-grid" id="repo-grid">
-          <p class="section-intro">Loading the latest builds…</p>
         </div>
       </div>
     </section>
@@ -739,39 +725,6 @@
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
-    const repoGrid = document.querySelector('#repo-grid');
-    if (repoGrid && 'fetch' in window) {
-      const fmtDate = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-      fetch('https://api.github.com/users/gagan-git-sardar/repos?sort=updated&per_page=3')
-        .then(r => { if (!r.ok) throw new Error('github'); return r.json(); })
-        .then(repos => {
-          repoGrid.innerHTML = '';
-          repos.forEach(repo => {
-            const card = document.createElement('article');
-            card.className = 'repo-card reveal visible';
-            const title = document.createElement('h3');
-            const link = document.createElement('a');
-            link.href = repo.html_url;
-            link.target = '_blank';
-            link.rel = 'noreferrer';
-            link.textContent = repo.name;
-            title.appendChild(link);
-            const desc = document.createElement('p');
-            desc.textContent = repo.description || 'A build in progress, documented in the repository.';
-            const meta = document.createElement('span');
-            meta.className = 'repo-meta';
-            meta.textContent = (repo.language ? repo.language + ' · ' : '') + 'Updated ' + fmtDate(repo.updated_at);
-            card.appendChild(title);
-            card.appendChild(desc);
-            card.appendChild(meta);
-            repoGrid.appendChild(card);
-          });
-          if (!repos.length) throw new Error('empty');
-        })
-        .catch(() => {
-          repoGrid.innerHTML = '<article class="repo-card reveal visible"><h3><a href="https://github.com/gagan-git-sardar" target="_blank" rel="noreferrer">github.com/gagan-git-sardar</a></h3><p>All builds and project code live on GitHub.</p><span class="repo-meta">View the repositories</span></article>';
-        });
-    }
     const lastUpdated = document.querySelector('#last-updated');
     if (lastUpdated && 'fetch' in window) {
       fetch('https://api.github.com/repos/gagan-git-sardar/gdspahuja/commits?per_page=1')
