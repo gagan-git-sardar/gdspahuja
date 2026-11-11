@@ -108,6 +108,16 @@
   .ticket .t-name{font-family:'Fraunces',serif;font-size:26px;color:var(--green);margin-top:4px}
   .ticket .t-row{display:flex;flex-wrap:wrap;gap:22px;margin-top:10px;font-size:15px}
   .ticket .t-row b{color:var(--terra)}
+  .stepper{display:inline-flex;align-items:center;gap:10px}
+  .stepper .lbl{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .stepper button{width:32px;height:32px;border-radius:50%;border:2px solid var(--green);background:#fff;color:var(--green);font-size:18px;font-weight:700;cursor:pointer;line-height:1}
+  .stepper #partyLabel{font-weight:600;min-width:74px;text-align:center}
+  .partyline{margin-top:16px;font-size:14px;color:var(--green);font-weight:600}
+  .feed{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+  .feed-head{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .feed .fi{font-size:14px;padding:5px 0;border-top:1px dashed var(--line)}
+  .feed .fi:first-child{border-top:none}
+  .feed .fi b{color:var(--terra)}
   .modebar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:20px}
   .modebar .lbl{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
   .wandering{display:none;margin-top:20px;background:var(--green-soft);border:1px solid var(--green);border-radius:16px;padding:20px 24px}
@@ -214,6 +224,7 @@
       <div class="t-name" id="ticketName">You are on the list</div>
       <div class="t-row">
         <div>Position <b id="ticketPos">-</b></div>
+        <div>Party <b id="ticketParty">Just me</b></div>
         <div>Hold code <b id="ticketCode">-</b></div>
         <div id="ticketTrip">Trip <b>-</b></div>
       </div>
@@ -224,8 +235,16 @@
       <div class="status-box"><div class="lbl">Your place</div><div class="big" id="place">Not in line</div><span class="badge" id="spotbadge" style="display:none">Spot protected</span></div>
       <div class="status-box"><div class="lbl">Status</div><div class="big" id="status" style="font-size:24px;line-height:1.25">Choose a line above</div></div>
     </div>
+    <div class="partyline" id="partyLine" style="display:none"></div>
+    <div class="feed" id="feed" style="display:none"><div class="feed-head">The line, live</div><div id="feedItems"></div></div>
     <div class="controls">
       <button class="btn" id="joinBtn">Join the line</button>
+      <div class="stepper" role="group" aria-label="Party size">
+        <span class="lbl">Party</span>
+        <button id="partyMinus" aria-label="Fewer people">-</button>
+        <span id="partyLabel">Just me</span>
+        <button id="partyPlus" aria-label="More people">+</button>
+      </div>
       <div class="toggle" role="group" aria-label="Demo speed">
         <button id="spd1" class="on">Real time</button><button id="spd60">Demo speed 60x</button>
       </div>
@@ -362,12 +381,74 @@ const DATA = {
   ]}
 };
 const BUFFER = 10;
-let cur = "sunny", joined = false, remaining = 0, total = 0, speed = 1, timer = null, wandering = null, headbackShown = false;
+let cur = "sunny", joined = false, remaining = 0, total = 0, speed = 1, timer = null, wandering = null, headbackShown = false, graceLeft = 0, partySize = 1, feedCount = 0;
 
 const $ = id => document.getElementById(id);
 const linesEl = $("lines"), placesEl = $("places");
 
 function ord(n){const s=["th","st","nd","rd"],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
+function feed(html){
+  const box = $("feed"); if(!box) return;
+  box.style.display = "block";
+  const items = $("feedItems");
+  const d = document.createElement("div"); d.className = "fi"; d.innerHTML = html;
+  items.prepend(d);
+  while(items.children.length > 3) items.removeChild(items.lastChild);
+}
+const FEED_LINES = [
+  n => "A party of " + (2 + (n % 3)) + " was just seated",
+  n => "The host called the next name on the list",
+  n => "A party ahead decided not to wait and left",
+  n => "Two tables turned over at once"
+];
+function feedMove(p){
+  const ahead = p - 1;
+  const line = FEED_LINES[feedCount++ % FEED_LINES.length](p);
+  feed(line + " · <b>" + (ahead === 0 ? "you are next" : ahead + (ahead === 1 ? " party" : " parties") + " ahead of you") + "</b>");
+}
+function partyText(){ return partySize <= 1 ? "Just me" : "Party of " + partySize; }
+function showParty(){
+  const pl = $("partyLine");
+  if(joined){
+    pl.style.display = "block";
+    pl.textContent = partySize <= 1
+      ? "One ticket, just for you. Your name, your proof, your place."
+      : "One ticket holds your whole party of " + partySize + ". Nobody in your group needs their own phone, app or place in line.";
+  } else pl.style.display = "none";
+}
+function finishWait(){
+  if(wandering && graceLeft <= 0){
+    graceLeft = 5 * 60;
+    $("ready").textContent = "Your table is ready and the host is holding it for you. Head back now.";
+    $("ready").classList.add("show"); $("headback").classList.remove("show");
+    const b = $("spotbadge"); b.textContent = "Table held for you"; b.classList.add("warn");
+    setStatus("Table ready - held while you head back");
+    feed("Your table was called · <b>the host is holding it for 5 minutes</b>");
+    return "grace";
+  }
+  return "done";
+}
+function seated(msg){
+  if(timer) clearInterval(timer); timer = null;
+  $("clock").textContent = "00:00"; $("barfill").style.width = "100%";
+  $("ready").textContent = msg; $("ready").classList.add("show");
+  $("headback").classList.remove("show"); $("wanderingBox").classList.remove("show");
+  wandering = null; graceLeft = 0;
+}
+function graceStep(){
+  graceLeft -= 0.25 * speed;
+  const b = $("spotbadge"); b.textContent = "Table held · " + fmt(graceLeft) + " left"; b.classList.add("warn");
+  if(graceLeft <= 0){
+    graceLeft = 0; wandering = null;
+    $("wanderingBox").classList.remove("show"); $("headback").classList.remove("show"); $("ready").classList.remove("show");
+    total = 8 * 60; remaining = total;
+    $("place").textContent = "1st in line";
+    b.textContent = "Spot protected"; b.classList.remove("warn");
+    setStatus("The host had to seat the next party. You are re-queued at the front - the next table is yours.");
+    feed("The held table was released · <b>you are re-queued at the front, next table is yours</b>");
+    renderPlaces();
+  }
+}
 function syncPos(flash){
   if(!joined || !total) return;
   const p = Math.max(1, Math.ceil(DATA[cur].place * remaining / total));
@@ -375,6 +456,7 @@ function syncPos(flash){
   if($("place").textContent !== label){
     $("place").textContent = label;
     const tp = $("ticketPos"); if(tp) tp.textContent = ord(p);
+    feedMove(p);
     if(flash && !wandering) setStatus("You moved up - now " + label);
   }
 }
@@ -435,13 +517,15 @@ function refreshPlaces(){
 function setStatus(t){ $("status").textContent = t; }
 function reset(clearSel = true){
   joined = false; wandering = null; headbackShown = false;
-  remaining = 0; total = 0;
+  remaining = 0; total = 0; graceLeft = 0; feedCount = 0;
   if(timer) clearInterval(timer); timer = null;
   $("clock").textContent = "--:--"; $("barfill").style.width = "0%";
   $("place").textContent = "Not in line"; $("spotbadge").style.display = "none";
   setStatus("Choose a line above"); $("joinBtn").disabled = false;
   $("headback").classList.remove("show"); $("ready").classList.remove("show");
   $("wanderingBox").classList.remove("show");
+  $("feed").style.display = "none"; $("feedItems").innerHTML = "";
+  $("partyLine").style.display = "none";
   renderPlaces();
 }
 function join(){
@@ -451,6 +535,8 @@ function join(){
   $("spotbadge").style.display = "inline-block"; $("spotbadge").textContent = "Spot protected";
   $("spotbadge").classList.remove("warn");
   setStatus("In line at " + r.name); $("joinBtn").disabled = true;
+  showParty();
+  feed("You joined the list at " + r.name + " · <b>" + (r.place - 1) + " parties ahead of you</b>");
   $("headback").classList.remove("show"); $("ready").classList.remove("show"); $("wanderingBox").classList.remove("show");
   renderPlaces();
   if(timer) clearInterval(timer);
@@ -460,7 +546,10 @@ function join(){
 function tick(){
   remaining -= 0.25 * speed;
   if(remaining <= 0){
-    remaining = 0; clearInterval(timer); timer = null;
+    remaining = 0;
+    if(graceLeft > 0){ $("clock").textContent = "00:00"; $("barfill").style.width = "100%"; graceStep(); refreshPlaces(); return; }
+    if(finishWait() === "grace"){ $("clock").textContent = "00:00"; $("barfill").style.width = "100%"; return; }
+    clearInterval(timer); timer = null;
     $("clock").textContent = "00:00"; $("barfill").style.width = "100%";
     $("ready").classList.add("show"); $("headback").classList.remove("show");
     setStatus("Table ready at " + DATA[cur].name); refreshPlaces(); return;
@@ -487,10 +576,25 @@ function wander(i){
   setStatus("Wandering · " + wandering.n);
 }
 $("backBtn").onclick = () => {
+  if(graceLeft > 0){
+    seated("You made it back in time - the host held your table. Enjoy your meal.");
+    $("spotbadge").textContent = "Seated"; $("spotbadge").classList.remove("warn");
+    setStatus("Seated at " + DATA[cur].name);
+    feed("You arrived during the hold · <b>seated at your table</b>");
+    return;
+  }
   wandering = null; $("wanderingBox").classList.remove("show"); $("headback").classList.remove("show");
   $("spotbadge").textContent = "Spot protected"; $("spotbadge").classList.remove("warn");
   setStatus("Back at " + DATA[cur].name + " · in line");
 };
+function setParty(n){
+  partySize = Math.max(1, Math.min(10, n));
+  $("partyLabel").textContent = partyText();
+  const tp = $("ticketParty"); if(tp) tp.textContent = partyText();
+  showParty();
+}
+$("partyMinus").onclick = () => setParty(partySize - 1);
+$("partyPlus").onclick = () => setParty(partySize + 1);
 $("joinBtn").onclick = join;
 $("resetBtn").onclick = () => reset(true);
 $("spd1").onclick = () => { speed = 1; $("spd1").classList.add("on"); $("spd60").classList.remove("on"); };
@@ -529,6 +633,9 @@ function wayStart(){
   badge.style.display = "inline-block"; badge.textContent = "Spot protected"; badge.classList.remove("warn");
   $("ticketName").textContent = "On the list at " + r.name;
   $("ticketPos").textContent = r.place + "th";
+  $("ticketParty").textContent = partyText();
+  showParty();
+  feed("You joined from wherever you are · <b>" + (r.place - 1) + " parties ahead of you</b>");
   $("ticketCode").textContent = "HOLD-" + cur.slice(0,2).toUpperCase() + "-" + (1000 + r.place * 37);
   $("ticketBox").classList.add("show");
   $("joinBtn").disabled = true;
@@ -554,7 +661,10 @@ function wayTick(){
     }
   }
   if(remaining <= 0){
-    remaining = 0; clearInterval(timer); timer = null;
+    remaining = 0;
+    if(graceLeft > 0){ $("clock").textContent = "00:00"; $("barfill").style.width = "100%"; graceStep(); refreshPlaces(); return; }
+    if(finishWait() === "grace"){ $("clock").textContent = "00:00"; $("barfill").style.width = "100%"; return; }
+    clearInterval(timer); timer = null;
     $("clock").textContent = "00:00"; $("barfill").style.width = "100%";
     $("ready").textContent = "You walked in as your table was called. Time spent standing in line: 0:00.";
     $("ready").classList.add("show"); $("headback").classList.remove("show");
