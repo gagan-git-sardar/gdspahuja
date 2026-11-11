@@ -92,6 +92,10 @@
   .place .code{font-size:12px;color:var(--muted);margin-top:auto;padding-top:10px}
   .place .code b{color:var(--terra);letter-spacing:.05em}
   .place.gone{opacity:.42}
+  .place.best{border:2px solid var(--gold);background:#FFFDF4}
+  .besttag{align-self:flex-start;background:var(--gold);color:#5C4303;font-size:12px;font-weight:700;letter-spacing:.04em;border-radius:999px;padding:5px 12px;margin-bottom:10px}
+  .backby{margin-top:10px;font-size:13px;color:var(--muted)}
+  .backby b{color:var(--terra)}
   .place.gone .btn{display:none}
   .place .toolate{display:none;font-size:13px;font-weight:600;color:var(--terra)}
   .place.gone .toolate{display:block}
@@ -363,6 +367,26 @@ let cur = "sunny", joined = false, remaining = 0, total = 0, speed = 1, timer = 
 const $ = id => document.getElementById(id);
 const linesEl = $("lines"), placesEl = $("places");
 
+function ord(n){const s=["th","st","nd","rd"],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
+function syncPos(flash){
+  if(!joined || !total) return;
+  const p = Math.max(1, Math.ceil(DATA[cur].place * remaining / total));
+  const label = ord(p) + " in line";
+  if($("place").textContent !== label){
+    $("place").textContent = label;
+    const tp = $("ticketPos"); if(tp) tp.textContent = ord(p);
+    if(flash && !wandering) setStatus("You moved up - now " + label);
+  }
+}
+function bestPick(){
+  const f = DATA[cur].places.filter(p => fits(p));
+  if(!f.length) return null;
+  return f.reduce((a,b) => (b.mins > a.mins || (b.mins === a.mins && b.walk < a.walk)) ? b : a);
+}
+function backBy(){
+  const t = new Date(Date.now() + Math.max(0,(remaining - BUFFER*60))*1000);
+  return t.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+}
 function fmt(s){ s = Math.max(0, Math.ceil(s)); return String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0"); }
 function fits(p){ return (p.walk*2 + p.mins + BUFFER) <= remaining/60; }
 
@@ -391,9 +415,21 @@ function renderPlaces(){
   refreshPlaces();
 }
 function refreshPlaces(){
+  const best = joined ? bestPick() : null;
   DATA[cur].places.forEach((p, i) => {
     const el = $("place" + i); if(!el) return;
-    el.classList.toggle("gone", joined && !fits(p));
+    const f = joined && fits(p);
+    el.classList.toggle("gone", joined && !f);
+    el.classList.toggle("best", !!best && p === best);
+    let tag = el.querySelector('.besttag');
+    if(!!best && p === best && f){
+      if(!tag){ tag = document.createElement('div'); tag.className = 'besttag'; tag.textContent = 'Best pick for your wait'; el.prepend(tag); }
+    } else if(tag) tag.remove();
+    let bb = el.querySelector('.backby');
+    if(f){
+      if(!bb){ bb = document.createElement('div'); bb.className = 'backby'; el.appendChild(bb); }
+      bb.innerHTML = 'Head back by <b>' + backBy() + '</b> and your spot stays safe';
+    } else if(bb) bb.remove();
   });
 }
 function setStatus(t){ $("status").textContent = t; }
@@ -431,6 +467,7 @@ function tick(){
   }
   $("clock").textContent = fmt(remaining);
   $("barfill").style.width = ((1 - remaining/total) * 100) + "%";
+  syncPos(true);
   if(wandering){
     const need = (wandering.walk + BUFFER) * 60;
     if(remaining <= need && !headbackShown){
@@ -534,6 +571,7 @@ function wayTick(){
       setStatus("Wandering · time to head back");
     }
   }
+  syncPos(true);
   if(joined) refreshPlaces();
 }
 $("modeAt").onclick = () => setMode(false);
