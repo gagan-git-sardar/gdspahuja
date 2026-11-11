@@ -32,6 +32,15 @@
   h1 span{color:var(--red)}
   .tagline{color:var(--muted);font-size:16.5px;max-width:560px;margin:0 auto}
   .hero-otter{width:min(430px,88vw);height:auto;margin:14px auto 0;display:block}
+  .hero-bear{width:min(400px,86vw);height:auto;margin:2px auto 0;display:block;
+    animation:bearbob 3.4s ease-in-out infinite;transform-origin:50% 85%}
+  @keyframes bearbob{
+    0%,100%{transform:translateY(0) rotate(-1.1deg)}
+    30%{transform:translateY(-9px) rotate(1.2deg)}
+    55%{transform:translateY(-3px) rotate(-.4deg)}
+    75%{transform:translateY(-10px) rotate(1deg)}
+  }
+  @media (prefers-reduced-motion: reduce){.hero-bear{animation:none}}
   .q{font-size:21px;margin-top:6px}
   .q em{color:var(--red);font-style:normal}
   section{margin-top:38px}
@@ -118,10 +127,9 @@
 <div class="wrap">
 
   <header>
-    <div class="sticker-badge chunky"><small>Control Freak</small>(Professionally)</div>
+    <img class="hero-bear" src="bear.png" alt="An animated cartoon bear in a blazer, bow tie and red cape, holding a clipboard and pointing at an internal controls checklist board, under the words Control Freak (Professionally)">
     <h1 class="chunky">Clear<span>Ready</span></h1>
     <p class="tagline">A readiness tracker for the SEC rule that moves US Treasury trades into central clearing at FICC.</p>
-    <img class="hero-otter" src="otter.png" alt="A cartoon otter in a blazer and red cape, pointing at an internal controls checklist board">
     <p class="q chunky">The deadline is fixed. <em>Is your firm ready?</em></p>
     <div class="controls-strip">
       <span><i>✓</i>Access</span><span><i>✓</i>Process</span><span><i>✓</i>Documentation</span><span><i>✓</i>Monitoring</span><span><i>✓</i>Compliance</span>
@@ -214,7 +222,7 @@
   <footer>
     ClearReady is a concept demo built to start a conversation, not an official product.<br>
     Built by <a href="https://skyfde.com">Gagandeep Singh Pahuja</a> · NYU Tandon, MS Management of Technology (2027)<br>
-    <div class="src">Figures from DTCC, the SEC and the Federal Reserve Bank of Kansas City, public sources checked November 2026. Not affiliated with DTCC. Otter drawn in the spirit of DTCC Internal Audit's own sticker, handed out at the 11 November 2026 site visit.</div>
+    <div class="src">Figures from DTCC, the SEC and the Federal Reserve Bank of Kansas City, public sources checked November 2026. Not affiliated with DTCC. Bear drawn in the spirit of the animated character at DTCC Internal Audit's 11 November 2026 site visit, and animated on this page.</div>
   </footer>
 
 </div>
