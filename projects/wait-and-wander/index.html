@@ -96,6 +96,16 @@
   .place .toolate{display:none;font-size:13px;font-weight:600;color:var(--terra)}
   .place.gone .toolate{display:block}
   .place .btn{margin-top:10px;text-align:center}
+  .feature{background:linear-gradient(135deg,#FFF8EA,#F7E8DF);border:1px solid var(--gold);border-radius:24px;padding:40px}
+  .feature h2{color:var(--terra)}
+  .ticket{display:none;margin-top:20px;border:2px dashed var(--gold);background:linear-gradient(135deg,#FFF6DE,#FCEBC8);border-radius:18px;padding:22px 26px}
+  .ticket.show{display:block}
+  .ticket .t-head{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#9A7414}
+  .ticket .t-name{font-family:'Fraunces',serif;font-size:26px;color:var(--green);margin-top:4px}
+  .ticket .t-row{display:flex;flex-wrap:wrap;gap:22px;margin-top:10px;font-size:15px}
+  .ticket .t-row b{color:var(--terra)}
+  .modebar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:20px}
+  .modebar .lbl{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
   .wandering{display:none;margin-top:20px;background:var(--green-soft);border:1px solid var(--green);border-radius:16px;padding:20px 24px}
   .wandering.show{display:block}
   .wandering .cw{font-family:'Fraunces',serif;font-size:30px;color:var(--terra);letter-spacing:.06em}
@@ -171,6 +181,16 @@
   <p class="closer-line">People don't need the wait to disappear. They need to trust that they can use it.</p>
 </div></section>
 
+<section style="padding-bottom:0"><div class="wrap">
+  <div class="feature">
+    <div class="kicker">New · The feature</div>
+    <h2>Arrive Ready: the line that starts before you do</h2>
+    <p class="sub" style="color:#7A6A55">Every other app makes you stand somewhere and wait. Arrive Ready puts your name on the list from wherever you are, syncs your trip with the kitchen's clock, and fills any gap with one perfect stop. You walk in as your table is called.</p>
+    <p class="closer-line" style="color:var(--terra)">Total time spent standing in line: 0 minutes.</p>
+    <a class="btn terra" href="#demo" style="margin-top:16px">Try Arrive Ready below</a>
+  </div>
+</div></section>
+
 <section id="demo"><div class="wrap">
   <div class="kicker">The concept, live</div>
   <h2>Try the live demo</h2>
@@ -179,6 +199,22 @@
   <div class="lines" id="lines"></div>
 
   <div class="panel">
+    <div class="modebar">
+      <span class="lbl">Demo mode</span>
+      <div class="toggle" role="group" aria-label="Demo mode">
+        <button id="modeAt" class="on">At the restaurant</button><button id="modeWay">On my way · Arrive Ready</button>
+      </div>
+    </div>
+    <div class="ticket" id="ticketBox">
+      <div class="t-head">Your held spot · golden ticket</div>
+      <div class="t-name" id="ticketName">You are on the list</div>
+      <div class="t-row">
+        <div>Position <b id="ticketPos">-</b></div>
+        <div>Hold code <b id="ticketCode">-</b></div>
+        <div id="ticketTrip">Trip <b>-</b></div>
+      </div>
+      <div style="margin-top:8px;font-size:14px;color:#7A6A55">This ticket is your proof. Your place cannot be given away while you travel or wander.</div>
+    </div>
     <div class="status-row">
       <div class="status-box"><div class="lbl">Your wait</div><div class="big" id="clock">--:--</div><div class="bar"><i id="barfill"></i></div></div>
       <div class="status-box"><div class="lbl">Your place</div><div class="big" id="place">Not in line</div><span class="badge" id="spotbadge" style="display:none">Spot protected</span></div>
@@ -424,6 +460,85 @@ $("spd1").onclick = () => { speed = 1; $("spd1").classList.add("on"); $("spd60")
 $("spd60").onclick = () => { speed = 60; $("spd60").classList.add("on"); $("spd1").classList.remove("on"); };
 $("bizForm").addEventListener("submit", e => { e.preventDefault(); $("formOk").style.display = "block"; e.target.reset(); });
 renderLines(); renderPlaces();
+</script>
+<script>
+// ---- Arrive Ready mode: join the line from anywhere ----
+const TRIPS = { sunny: 14, golden: 11, nonnas: 17 }; // minutes to reach each restaurant
+let wayMode = false, wayTrip = 0, wayPhase = "idle";
+
+function setMode(way){
+  wayReset();
+  wayMode = way;
+  $("modeAt").classList.toggle("on", !way);
+  $("modeWay").classList.toggle("on", way);
+  $("joinBtn").textContent = way ? "Start my trip · join from here" : "Join the line";
+  $("joinBtn").onclick = way ? wayStart : join;
+  if(way) setStatus("Arrive Ready: pick a line, then start your trip");
+}
+function wayReset(){
+  if(timer) clearInterval(timer); timer = null;
+  reset();
+  wayPhase = "idle"; wayTrip = 0;
+  $("ticketBox").classList.remove("show");
+  $("ready").textContent = "Your table is ready. Enjoy your meal.";
+}
+function wayStart(){
+  const r = DATA[cur];
+  joined = true; wandering = null; headbackShown = false;
+  total = r.wait * 60; remaining = total;
+  wayTrip = TRIPS[cur] * 60; wayPhase = "travel";
+  $("place").textContent = r.place + "th in line";
+  const badge = $("spotbadge");
+  badge.style.display = "inline-block"; badge.textContent = "Spot protected"; badge.classList.remove("warn");
+  $("ticketName").textContent = "On the list at " + r.name;
+  $("ticketPos").textContent = r.place + "th";
+  $("ticketCode").textContent = "HOLD-" + cur.slice(0,2).toUpperCase() + "-" + (1000 + r.place * 37);
+  $("ticketBox").classList.add("show");
+  $("joinBtn").disabled = true;
+  $("headback").classList.remove("show"); $("ready").classList.remove("show"); $("wanderingBox").classList.remove("show");
+  placesEl.innerHTML = '<div class="place" style="grid-column:1/-1;text-align:center;color:var(--muted)">You are on your way. Nearby stops unlock when you arrive, and only ones that fit your remaining wait.</div>';
+  setStatus("On your way · your name is already on the list");
+  if(timer) clearInterval(timer);
+  timer = setInterval(wayTick, 250);
+  wayTick();
+}
+function wayTick(){
+  const step = 0.25 * speed;
+  remaining -= step;
+  if(wayPhase === "travel"){
+    wayTrip -= step;
+    $("ticketTrip").innerHTML = "Trip <b>" + fmt(wayTrip) + "</b> · table in <b>" + fmt(remaining) + "</b>";
+    if(wayTrip <= 0){
+      wayTrip = 0; wayPhase = "gap";
+      renderPlaces();
+      const rec = DATA[cur].places.find(p => fits(p));
+      setStatus(rec ? "Arrived with time to spare. Best stop: " + rec.n + " — they are expecting you." : "Arrived. Your table is nearly ready.");
+      $("ticketTrip").innerHTML = "You have arrived · <b>" + fmt(remaining) + "</b> until your table";
+    }
+  }
+  if(remaining <= 0){
+    remaining = 0; clearInterval(timer); timer = null;
+    $("clock").textContent = "00:00"; $("barfill").style.width = "100%";
+    $("ready").textContent = "You walked in as your table was called. Time spent standing in line: 0:00.";
+    $("ready").classList.add("show"); $("headback").classList.remove("show");
+    setStatus("Arrive Ready complete · " + DATA[cur].name);
+    $("ticketTrip").innerHTML = "Arrived · <b>table ready</b>";
+    refreshPlaces(); return;
+  }
+  $("clock").textContent = fmt(remaining);
+  $("barfill").style.width = ((1 - remaining/total) * 100) + "%";
+  if(wayPhase === "gap" && wandering){
+    if(remaining <= (wandering.walk + BUFFER) * 60 && !headbackShown){
+      headbackShown = true; $("headback").classList.add("show");
+      const badge = $("spotbadge"); badge.textContent = "Head back now"; badge.classList.add("warn");
+      setStatus("Wandering · time to head back");
+    }
+  }
+  if(joined) refreshPlaces();
+}
+$("modeAt").onclick = () => setMode(false);
+$("modeWay").onclick = () => setMode(true);
+$("resetBtn").onclick = () => { const wasWay = wayMode; wayReset(); if(wasWay){ $("joinBtn").textContent = "Start my trip · join from here"; $("joinBtn").onclick = wayStart; setStatus("Arrive Ready: pick a line, then start your trip"); } };
 </script>
 </body>
 </html>
