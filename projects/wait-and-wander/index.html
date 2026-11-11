@@ -471,6 +471,7 @@ function graceStep(){
     graceLeft = 0; wandering = null;
     $("wanderingBox").classList.remove("show"); $("headback").classList.remove("show"); $("ready").classList.remove("show");
     total = 8 * 60; remaining = total;
+    $("clock").textContent = fmt(remaining);
     $("place").textContent = "1st in line";
     b.textContent = "Spot protected"; b.classList.remove("warn");
     setStatus("The host had to seat the next party. You are re-queued at the front - the next table is yours.");
