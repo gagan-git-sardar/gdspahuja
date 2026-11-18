@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClaimFlow — Agentic Claims Triage | NYU x Capgemini Hackathon Demo</title>
+<style>
+  :root{
+    --ink:#14202e; --muted:#5b6b7c; --line:#dbe3ec; --bg:#f4f6f9; --card:#ffffff;
+    --accent:#0b5fa5; --accent2:#12a594; --warn:#b54708; --warnbg:#fffaeb;
+    --stop:#b42318; --stopbg:#fef3f2; --ok:#027a48; --okbg:#ecfdf3;
+    --radius:14px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--ink); line-height:1.45;}
+  header{background:linear-gradient(120deg,#0a2e4f,#0b5fa5); color:#fff; padding:26px 20px 22px;}
+  .wrap{max-width:1180px; margin:0 auto;}
+  header h1{font-size:30px; letter-spacing:.2px;}
+  header h1 span{color:#7fd1c0;}
+  header p{color:#cfe3f5; max-width:760px; margin-top:6px; font-size:15px;}
+  .badges{margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;}
+  .badge{font-size:12px; font-weight:600; padding:4px 10px; border-radius:999px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.35);}
+  .badge.synth{background:#ffd166; color:#5b4300; border-color:#ffd166;}
+  .metrics{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:18px auto 0;}
+  .metric{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px;}
+  .metric .num{font-size:26px; font-weight:700;}
+  .metric .lbl{font-size:12.5px; color:var(--muted); margin-top:2px;}
+  main{display:grid; grid-template-columns:340px 1fr; gap:16px; padding:18px 20px 30px;}
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+  .panel h2{font-size:14px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); padding:14px 16px 10px;}
+  .claim{padding:12px 16px; border-top:1px solid var(--line); cursor:pointer;}
+  .claim:hover{background:#f8fbfe;}
+  .claim.sel{background:#eef6fd; border-left:4px solid var(--accent);}
+  .claim .t{font-weight:650; font-size:14.5px; display:flex; justify-content:space-between; gap:8px;}
+  .claim .s{font-size:12.5px; color:var(--muted); margin-top:2px;}
+  .pill{font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; white-space:nowrap;}
+  .pill.new{background:#eef2f6; color:#43556b;}
+  .pill.ready{background:var(--okbg); color:var(--ok);}
+  .pill.human{background:var(--stopbg); color:var(--stop);}
+  .pill.done{background:#e6f4f1; color:#067647;}
+  .detail{padding:18px 20px;}
+  .detail h3{font-size:20px; margin-bottom:2px;}
+  .detail .sub{color:var(--muted); font-size:13.5px; margin-bottom:14px;}
+  .fnol{background:#0f2233; color:#d7e7f5; border-radius:10px; padding:14px 16px; font-size:13.5px; white-space:pre-wrap; font-family:ui-monospace,Menlo,Consolas,monospace;}
+  .fnol b{color:#7fd1c0; font-family:-apple-system,"Segoe UI",Roboto,sans-serif; display:block; margin-bottom:6px; font-size:12px; letter-spacing:.06em; text-transform:uppercase;}
+  button{font:inherit; cursor:pointer; border-radius:10px; border:1px solid transparent; padding:10px 18px; font-weight:650;}
+  .run{background:var(--accent); color:#fff; margin:16px 0 4px;}
+  .run:disabled{background:#9db8cc; cursor:default;}
+  .approve{background:var(--accent2); color:#fff;}
+  .override{background:#fff; border-color:var(--line); color:var(--ink);}
+  .steps{margin-top:14px; display:flex; flex-direction:column; gap:10px;}
+  .step{border:1px solid var(--line); border-radius:12px; padding:12px 14px; opacity:.35;}
+  .step.active{opacity:1; border-color:var(--accent); box-shadow:0 0 0 3px #e3f0fa;}
+  .step.done{opacity:1;}
+  .step .sh{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:14px;}
+  .step .sb{font-size:13.5px; color:#33475e; margin-top:6px;}
+  .step .sb:empty{display:none;}
+  .fields{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px 18px; margin-top:6px; font-size:13.5px;}
+  .fields div b{color:var(--muted); font-weight:600;}
+  .bar{height:8px; background:#edf1f5; border-radius:99px; overflow:hidden; margin-top:6px;}
+  .bar i{display:block; height:100%; background:var(--accent2); width:0; transition:width .5s;}
+  .flag{background:var(--warnbg); border:1px solid #fedf89; color:var(--warn); border-radius:8px; padding:7px 10px; font-size:13px; margin-top:6px;}
+  .flag.red{background:var(--stopbg); border-color:#fecdca; color:var(--stop);}
+  .verdict{border-radius:12px; padding:14px 16px; margin-top:14px; font-size:14.5px; display:none;}
+  .verdict.ready{display:block; background:var(--okbg); border:1px solid #a6f4c5;}
+  .verdict.human{display:block; background:var(--stopbg); border:1px solid #fecdca;}
+  .verdict b{display:block; font-size:15.5px; margin-bottom:3px;}
+  .actions{display:none; gap:10px; margin-top:12px; flex-wrap:wrap; align-items:center;}
+  .actions.show{display:flex;}
+  select{font:inherit; padding:9px 10px; border-radius:10px; border:1px solid var(--line);}
+  .empty{padding:34px 22px; color:var(--muted); font-size:14.5px;}
+  footer{max-width:1180px; margin:0 auto; padding:0 20px 28px; color:var(--muted); font-size:12.5px;}
+  @media (max-width:860px){ main{grid-template-columns:1fr;} .metrics{grid-template-columns:repeat(2,1fr);} }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Claim<span>Flow</span></h1>
+    <p>An agentic claims triage demo for the NYU x Capgemini Hackathon. Four subagents prepare a claim end to end, and anything severe, incomplete or suspicious stops at a human. Nothing is auto-decided.</p>
+    <div class="badges">
+      <span class="badge synth">SYNTHETIC SAMPLE DATA — no real client data</span>
+      <span class="badge">Built solo by Gagandeep Singh Pahuja</span>
+      <span class="badge">Intake · Assessment · Exception check · Routing</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="num" id="mQueue">8</div><div class="lbl">claims in the sample queue</div></div>
+      <div class="metric"><div class="num" id="mProcessed">0</div><div class="lbl">claims prepared by the agent</div></div>
+      <div class="metric"><div class="num" id="mStopped">0</div><div class="lbl">stopped for a human (by design)</div></div>
+      <div class="metric"><div class="num" id="mTime">—</div><div class="lbl">avg agent prep time vs a 25 min manual triage baseline*</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="width:100%;">
+  <section class="panel">
+    <h2>Claims queue</h2>
+    <div id="queue"></div>
+  </section>
+
+  <section class="panel">
+    <div id="detail"><div class="empty">Pick a claim from the queue, then run the agent. You will see each subagent's work, its extracted fields and its reasoning, before any routing happens.</div></div>
+  </section>
+</main>
+
+<footer>
+  *The 25 minute manual baseline is a planning assumption to be validated with handlers, not a measured result. This demo runs entirely in the browser on synthetic sample claims written for the hackathon discussion. Demo flow: select a claim, run the agent, read the four steps, then approve or override the routing as the handler.
+</footer>
+
+<script>
+const CLAIMS = [
+ { id:"CLM-1042", type:"Auto — rear-end collision", who:"Policyholder: D. Alvarez · Policy AUTO-88123", amount:"$3,850",
+   fnol:"Rear-ended at a red light on 5th Ave yesterday around 6:10 pm. Other driver accepted fault at the scene. Bumper and boot lid damaged, car still drivable. Police report filed, number PR-2291. Photos of both cars taken. No injuries. Need a repair estimate and a rental if the car is in the shop more than two days.",
+   fields:{Date:"Yesterday, 6:10 pm", Location:"5th Ave (city not stated)", "Police report":"PR-2291 filed", Photos:"Yes, both vehicles", Injuries:"None reported", Fault:"Other driver accepted"},
+   completeness:92, severity:"Low", sevScore:22,
+   flags:[], verdict:"ready", queue:"Fast-track auto repairs",
+   reason:"Complete first notice, police report and photos on file, no injuries, fault accepted by the other driver. This is the routine claim that should not wait behind complex ones." },
+ { id:"CLM-1043", type:"Property — water damage", who:"Policyholder: S. Okafor · Policy HOME-33107", amount:"$6,200",
+   fnol:"Woke up to water all over the kitchen floor, looks like the dishwasher hose burst overnight. Flooring is lifting and the cabinet base is swollen. Plumber came and stopped the leak. I have not taken photos yet and I do not have the plumber invoice with me, it is at my office.",
+   fields:{Date:"Overnight, discovered this morning", Location:"Home kitchen", "Police report":"Not applicable", Photos:"Not yet taken", Injuries:"None reported", Fault:"Appliance failure (suspected)"},
+   completeness:54, severity:"Medium", sevScore:45,
+   flags:["Missing: photos of the damage","Missing: plumber invoice / proof of mitigation cost"],
+   verdict:"human", queue:"Handler review — evidence incomplete",
+   reason:"Stopped for a human. The claim may be routine, but the evidence file is not: no photos and no invoice. Routing it now would build the whole file on missing documents." },
+ { id:"CLM-1044", type:"Commercial — ethanol plant equipment", who:"Policyholder: Prairie Ethanol Co-op · Policy COMM-7719", amount:"$148,000",
+   fnol:"Centrifuge unit 3 at the Grangeville plant failed during the night shift, bearing seizure. Production line B is down. Maintenance log and SCADA alarm record attached. No injuries. Plant manager estimates 4 to 6 days of downtime if the spare rotor has to be shipped in. Business interruption cover is on the policy, schedule page 4.",
+   fields:{Date:"Night shift, last night", Location:"Grangeville plant, line B", "Police report":"Not applicable", Photos:"Maintenance log + SCADA record attached", Injuries:"None reported", Fault:"Equipment failure (bearing seizure)"},
+   completeness:88, severity:"High", sevScore:78,
+   flags:["Business interruption exposure: 4–6 days of downtime","Claim value above the fast-track limit"],
+   verdict:"human", queue:"Specialist — commercial & business interruption",
+   reason:"Stopped for a human, by the severity rule. The file is well documented, but the amount and the business interruption exposure put it with a specialist, not in a fast-track queue." },
+ { id:"CLM-1045", type:"Auto — collision with injury", who:"Policyholder: M. Chen · Policy AUTO-90214", amount:"$27,500",
+   fnol:"Two-car collision at the junction by the depot. My passenger was taken to hospital with a suspected broken wrist and is still there. My car is not drivable and was towed. Police attended, report pending. I am shaken and cannot deal with forms today, please call me tomorrow.",
+   fields:{Date:"Today, time not stated", Location:"Junction by the depot", "Police report":"Attended, report pending", Photos:"Not provided", Injuries:"Passenger hospitalised, suspected broken wrist", Fault:"Not yet established"},
+   completeness:61, severity:"High", sevScore:91,
+   flags:["Injury reported: passenger in hospital","Fault not established","Policyholder asked for a call, not forms"],
+   verdict:"human", queue:"Senior handler — injury claims, call first",
+   reason:"Stopped for a human, immediately. There is an injured person in hospital and a distressed policyholder who asked for a phone call. No agent output should touch this beyond flagging it urgent." },
+ { id:"CLM-1046", type:"Auto — windshield replacement", who:"Policyholder: J. Novak · Policy AUTO-55231", amount:"$420",
+   fnol:"Stone chip spread into a crack across the windshield this morning. Car is safe to drive short distances. Photo of the crack attached. Happy to use your approved glass fitter any day this week.",
+   fields:{Date:"This morning", Location:"Not stated (mobile fitter requested)", "Police report":"Not applicable", Photos:"Yes, crack photo attached", Injuries:"None reported", Fault:"Road debris, no other party"},
+   completeness:95, severity:"Low", sevScore:8,
+   flags:[], verdict:"ready", queue:"Fast-track glass (approved fitter)",
+   reason:"Complete, low value, photo on file, policyholder flexible on timing. Exactly the claim an agent should clear in minutes so handlers can spend their day on the hard ones." },
+ { id:"CLM-1047", type:"Travel — trip cancellation", who:"Policyholder: R. Haddad · Policy TRVL-2098", amount:"$2,150",
+   fnol:"Claiming for a cancelled flight and hotel for the second time. First claim was last month, reference CLM-0997, same trip, same receipts. Submitting again because the first one was closed and I think it should have been paid.",
+   fields:{Date:"Trip dates as CLM-0997", Location:"As CLM-0997", "Police report":"Not applicable", Photos:"Same receipts as CLM-0997", Injuries:"None reported", Fault:"Duplicate of a closed claim"},
+   completeness:70, severity:"Medium", sevScore:64,
+   flags:["Possible duplicate: same trip and receipts as closed claim CLM-0997"],
+   verdict:"human", queue:"Handler review — possible duplicate payment",
+   reason:"Stopped for a human. The exception check matched this to a closed claim with the same receipts. Paying twice is the costliest quiet error in claims, so a person decides." },
+ { id:"CLM-1048", type:"Property — kitchen fire", who:"Policyholder: T. Byrne · Policy HOME-41092", amount:"$31,000",
+   fnol:"Small fire in the kitchen last night, hob left on. Fire brigade attended and put it out, incident number FB-552. Kitchen units and ceiling damaged, heavy smoke damage in the hall. Family is staying with relatives. Photos attached. We need to know quickly if temporary accommodation is covered.",
+   fields:{Date:"Last night", Location:"Home kitchen and hall", "Police report":"Fire brigade incident FB-552", Photos:"Yes, attached", Injuries:"None reported", Fault:"Accidental, hob left on"},
+   completeness:90, severity:"High", sevScore:74,
+   flags:["Family displaced from the home","Urgent question on accommodation cover"],
+   verdict:"human", queue:"Senior handler — property, same-day call",
+   reason:"Stopped for a human, by the severity rule. The paperwork is complete, but a displaced family needs a person today, and the accommodation question needs a decision, not a queue position." },
+ { id:"CLM-1049", type:"Liability — slip in store", who:"Policyholder: Corner Grocery Ltd · Policy COMM-6630", amount:"$9,800",
+   fnol:"A customer slipped near the freezer aisle at about 3 pm and says she hurt her back. Staff filled an incident form. CCTV exists but has not been pulled yet. The customer has written asking for her medical bills to be covered. No solicitor letter yet.",
+   fields:{Date:"Today, about 3 pm", Location:"Store, freezer aisle", "Police report":"Not applicable", Photos:"Incident form filed; CCTV not yet pulled", Injuries:"Customer reports back injury (unverified)", Fault:"Disputed / not established"},
+   completeness:58, severity:"Medium", sevScore:58,
+   flags:["Key evidence at risk: CCTV not yet preserved","Injury claimed by a third party, unverified"],
+   verdict:"human", queue:"Handler review — preserve evidence first",
+   reason:"Stopped for a human. Liability claims turn on evidence, and the CCTV will be overwritten if nobody pulls it today. The agent's job here is to shout early, not to route quietly." }
+];
+
+let selected = null, running = false, processed = 0, stopped = 0, totalSecs = 0;
+const queueEl = document.getElementById('queue');
+const detailEl = document.getElementById('detail');
+
+function pillFor(c){
+  if(c.state === 'done') return '<span class="pill done">ROUTED ✓</span>';
+  if(c.state === 'human-done') return '<span class="pill human">WITH HUMAN ✓</span>';
+  if(c.state === 'ready') return '<span class="pill ready">AGENT: READY</span>';
+  if(c.state === 'human') return '<span class="pill human">AGENT: STOPPED</span>';
+  return '<span class="pill new">NEW</span>';
+}
+function renderQueue(){
+  queueEl.innerHTML = CLAIMS.map((c,i)=>
+    `<div class="claim ${selected===i?'sel':''}" onclick="selectClaim(${i})">
+       <div class="t"><span>${c.id}</span>${pillFor(c)}</div>
+       <div class="s">${c.type} · ${c.amount}</div>
+     </div>`).join('');
+  document.getElementById('mQueue').textContent = CLAIMS.length;
+}
+function selectClaim(i){
+  if(running) return;
+  selected = i;
+  const c = CLAIMS[i];
+  renderQueue();
+  const already = (c.state==='done'||c.state==='human-done');
+  detailEl.innerHTML = `
+    <div class="detail">
+      <h3>${c.id} — ${c.type}</h3>
+      <div class="sub">${c.who} · Claimed amount ${c.amount}</div>
+      <div class="fnol"><b>First notice of loss, as received</b>${c.fnol}</div>
+      <button class="run" id="runBtn" onclick="runAgent()" ${already?'disabled':''}>${already?'Agent already ran on this claim':'Run the agent'}</button>
+      <div class="steps" id="steps" style="display:none">
+        <div class="step" id="st0"><div class="sh"><span>1 · Intake subagent</span><span class="st">…</span></div><div class="sb"></div></div>
+        <div class="step" id="st1"><div class="sh"><span>2 · Assessment subagent</span><span class="st">…</span></div><div class="sb"></div></div>
+        <div class="step" id="st2"><div class="sh"><span>3 · Exception subagent</span><span class="st">…</span></div><div class="sb"></div></div>
+        <div class="step" id="st3"><div class="sh"><span>4 · Routing subagent</span><span class="st">…</span></div><div class="sb"></div></div>
+      </div>
+      <div class="verdict" id="verdict"></div>
+      <div class="actions" id="actions">
+        <button class="approve" onclick="decide(true)">Approve as handler</button>
+        <select id="overrideSel">
+          ${["Fast-track auto repairs","Fast-track glass (approved fitter)","Handler review — evidence incomplete","Specialist — commercial & business interruption","Senior handler — injury claims, call first","Senior handler — property, same-day call","Handler review — possible duplicate payment","Handler review — preserve evidence first"].map(q=>`<option ${q===c.queue?'selected':''}>${q}</option>`).join('')}
+        </select>
+        <button class="override" onclick="decide(false)">Override routing</button>
+        <span style="font-size:12.5px;color:var(--muted)">The human decides. Overrides are counted, they are how the agent earns or loses trust.</span>
+      </div>
+    </div>`;
+  if(already){ showResult(c, true); }
+}
+function setStep(n, html, state){
+  const el = document.getElementById('st'+n);
+  el.className = 'step ' + state;
+  el.querySelector('.sb').innerHTML = html;
+  el.querySelector('.st').textContent = state==='done' ? 'done' : 'working…';
+}
+function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+async function runAgent(){
+  const c = CLAIMS[selected];
+  running = true;
+  document.getElementById('runBtn').disabled = true;
+  document.getElementById('runBtn').textContent = 'Agent running…';
+  document.getElementById('steps').style.display = 'flex';
+  const secs = 34 + Math.round(Math.random()*30); // simulated prep time, seconds
+
+  setStep(0,'Reading the first notice of loss and pulling out the facts a handler would type by hand…','active');
+  await wait(900);
+  const fieldsHtml = '<div class="fields">' + Object.entries(c.fields).map(([k,v])=>`<div><b>${k}:</b> ${v}</div>`).join('') + '</div><div style="margin-top:6px">Every field is shown, not hidden, so the handler can check the extraction instead of trusting it.</div>';
+  setStep(0, fieldsHtml, 'done');
+
+  setStep(1,'Scoring the file the way a triage handler would: is it complete, and how serious is it?','active');
+  await wait(900);
+  setStep(1, `Completeness of the evidence file: <b>${c.completeness}%</b><div class="bar"><i style="width:${c.completeness}%"></i></div><div style="margin-top:6px">Severity: <b>${c.severity}</b> (${c.sevScore}/100), driven by injuries, displacement, claim value and third-party exposure.</div>`, 'done');
+
+  setStep(2,'Checking for the things that quietly cost money or hurt people: missing documents, duplicates, evidence that will disappear, anyone injured or displaced.','active');
+  await wait(900);
+  setStep(2, c.flags.length ? c.flags.map(f=>`<div class="flag ${c.verdict==='human'?'red':''}">⚠ ${f}</div>`).join('') : 'No exceptions found. Documents present, no duplicate match, no injury or displacement flags.', 'done');
+
+  setStep(3,'Applying the routing rules. Rule one: on uncertainty, stop. Rule two: severity beats speed.','active');
+  await wait(900);
+  setStep(3, c.verdict==='ready'
+      ? `No stop rule triggered. Proposed route: <b>${c.queue}</b>.`
+      : `Stop rule triggered. This claim does <b>not</b> get auto-routed. Proposed handoff: <b>${c.queue}</b>, with the reason stated below.`, 'done');
+
+  c.state = c.verdict; c.secs = secs;
+  processed++; totalSecs += secs;
+  if(c.verdict==='human') stopped++;
+  document.getElementById('mProcessed').textContent = processed;
+  document.getElementById('mStopped').textContent = stopped;
+  document.getElementById('mTime').textContent = Math.round(totalSecs/processed) + 's';
+  showResult(c, false);
+  running = false;
+  renderQueue();
+}
+function showResult(c, instant){
+  const v = document.getElementById('verdict');
+  v.className = 'verdict ' + c.verdict;
+  v.innerHTML = c.verdict==='ready'
+    ? `<b>Ready to route → ${c.queue}</b>${c.reason}`
+    : `<b>Stopped for a human → ${c.queue}</b>${c.reason}`;
+  document.getElementById('actions').classList.add('show');
+  const rb = document.getElementById('runBtn');
+  if(rb){ rb.disabled = true; rb.textContent = 'Agent ran — handler decision needed'; }
+}
+function decide(approved){
+  const c = CLAIMS[selected];
+  if(!approved){
+    const q = document.getElementById('overrideSel').value;
+    c.queue = q;
+  }
+  c.state = (c.verdict==='human') ? 'human-done' : 'done';
+  const v = document.getElementById('verdict');
+  v.innerHTML += `<div style="margin-top:8px"><b>${approved ? 'Handler approved the agent\u2019s routing.' : 'Handler overrode the routing → ' + c.queue + '.'}</b> ${approved ? '' : 'The override is logged: it is the signal that tells the team where the agent still gets it wrong.'}</div>`;
+  document.getElementById('actions').classList.remove('show');
+  renderQueue();
+}
+renderQueue();
+</script>
+</body>
+</html>
