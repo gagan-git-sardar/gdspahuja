@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ClaimFlow — Agentic Claims Triage | NYU x Capgemini Hackathon Demo</title>
+<title>ClaimFlow — Insurance claims, sorted safely | NYU x Capgemini Hackathon Demo</title>
 <style>
   :root{
     --ink:#14202e; --muted:#5b6b7c; --line:#dbe3ec; --bg:#f4f6f9; --card:#ffffff;
@@ -77,20 +77,25 @@
 <header>
   <div class="wrap">
     <h1>Claim<span>Flow</span></h1>
-    <p>An agentic claims triage demo for the NYU x Capgemini Hackathon. Four subagents prepare a claim end to end, and anything severe, incomplete or suspicious stops at a human. Nothing is auto-decided.</p>
+    <p>ClaimFlow sorts new insurance claims, built for the NYU x Capgemini Hackathon. It reads each claim, checks how serious it is, checks for problems, and sends the simple ones forward for fast handling. Anything severe, incomplete or suspicious stops at a human. Nothing is decided automatically.</p>
     <div class="badges">
       <span class="badge synth">SYNTHETIC SAMPLE DATA — no real client data</span>
       <span class="badge">Built solo by Gagandeep Singh Pahuja</span>
-      <span class="badge">Intake · Assessment · Exception check · Routing</span>
+      <span class="badge">Reads the claim · Checks seriousness · Checks for problems · Routes it</span>
     </div>
     <div class="metrics">
       <div class="metric"><div class="num" id="mQueue">8</div><div class="lbl">claims in the sample queue</div></div>
-      <div class="metric"><div class="num" id="mProcessed">0</div><div class="lbl">claims prepared by the agent</div></div>
+      <div class="metric"><div class="num" id="mProcessed">0</div><div class="lbl">claims ClaimFlow has prepared</div></div>
       <div class="metric"><div class="num" id="mStopped">0</div><div class="lbl">stopped for a human (by design)</div></div>
-      <div class="metric"><div class="num" id="mTime">—</div><div class="lbl">avg agent prep time vs a 25 min manual triage baseline*</div></div>
+      <div class="metric"><div class="num" id="mTime">—</div><div class="lbl">average prep time per claim (by hand it takes about 25 min*)</div></div>
     </div>
   </div>
 </header>
+<div class="wrap" style="padding:14px 20px 0;">
+  <div style="background:#eef6fd;border:1px solid #cfe3f5;border-radius:12px;padding:12px 16px;font-size:14px;">
+    <b>How to try it:</b> &nbsp;1. Pick a claim from the queue. &nbsp;2. Press <b>Run ClaimFlow</b> and watch the four steps work. &nbsp;3. You are the handler: approve the routing, or override it.
+  </div>
+</div>
 
 <main class="wrap" style="width:100%;">
   <section class="panel">
@@ -99,12 +104,12 @@
   </section>
 
   <section class="panel">
-    <div id="detail"><div class="empty">Pick a claim from the queue, then run the agent. You will see each subagent's work, its extracted fields and its reasoning, before any routing happens.</div></div>
+    <div id="detail"><div class="empty">Pick a claim from the queue, then press Run ClaimFlow. You will see each of the four steps do its work in plain sight: the facts it pulled out, the problems it found, and where it thinks the claim should go. Then you decide.</div></div>
   </section>
 </main>
 
 <footer>
-  *The 25 minute manual baseline is a planning assumption to be validated with handlers, not a measured result. This demo runs entirely in the browser on synthetic sample claims written for the hackathon discussion. Demo flow: select a claim, run the agent, read the four steps, then approve or override the routing as the handler.
+  *The 25 minute by-hand baseline is a planning assumption to be validated with handlers, not a measured result. This demo runs entirely in the browser on synthetic sample claims written for the hackathon discussion. Demo flow: select a claim, press Run ClaimFlow, read the four steps, then approve or override the routing as the handler.
 </footer>
 
 <script>
@@ -172,8 +177,8 @@ const detailEl = document.getElementById('detail');
 function pillFor(c){
   if(c.state === 'done') return '<span class="pill done">ROUTED ✓</span>';
   if(c.state === 'human-done') return '<span class="pill human">WITH HUMAN ✓</span>';
-  if(c.state === 'ready') return '<span class="pill ready">AGENT: READY</span>';
-  if(c.state === 'human') return '<span class="pill human">AGENT: STOPPED</span>';
+  if(c.state === 'ready') return '<span class="pill ready">READY</span>';
+  if(c.state === 'human') return '<span class="pill human">STOPPED</span>';
   return '<span class="pill new">NEW</span>';
 }
 function renderQueue(){
@@ -195,12 +200,12 @@ function selectClaim(i){
       <h3>${c.id} — ${c.type}</h3>
       <div class="sub">${c.who} · Claimed amount ${c.amount}</div>
       <div class="fnol"><b>First notice of loss, as received</b>${c.fnol}</div>
-      <button class="run" id="runBtn" onclick="runAgent()" ${already?'disabled':''}>${already?'Agent already ran on this claim':'Run the agent'}</button>
+      <button class="run" id="runBtn" onclick="runAgent()" ${already?'disabled':''}>${already?'ClaimFlow already ran on this claim':'Run ClaimFlow'}</button>
       <div class="steps" id="steps" style="display:none">
-        <div class="step" id="st0"><div class="sh"><span>1 · Intake subagent</span><span class="st">…</span></div><div class="sb"></div></div>
-        <div class="step" id="st1"><div class="sh"><span>2 · Assessment subagent</span><span class="st">…</span></div><div class="sb"></div></div>
-        <div class="step" id="st2"><div class="sh"><span>3 · Exception subagent</span><span class="st">…</span></div><div class="sb"></div></div>
-        <div class="step" id="st3"><div class="sh"><span>4 · Routing subagent</span><span class="st">…</span></div><div class="sb"></div></div>
+        <div class="step" id="st0"><div class="sh"><span>1 · Reads the claim (intake)</span><span class="st">…</span></div><div class="sb"></div></div>
+        <div class="step" id="st1"><div class="sh"><span>2 · Checks how serious it is (assessment)</span><span class="st">…</span></div><div class="sb"></div></div>
+        <div class="step" id="st2"><div class="sh"><span>3 · Checks for problems (exception check)</span><span class="st">…</span></div><div class="sb"></div></div>
+        <div class="step" id="st3"><div class="sh"><span>4 · Sends it to the right queue (routing)</span><span class="st">…</span></div><div class="sb"></div></div>
       </div>
       <div class="verdict" id="verdict"></div>
       <div class="actions" id="actions">
@@ -226,7 +231,7 @@ async function runAgent(){
   const c = CLAIMS[selected];
   running = true;
   document.getElementById('runBtn').disabled = true;
-  document.getElementById('runBtn').textContent = 'Agent running…';
+  document.getElementById('runBtn').textContent = 'ClaimFlow is working…';
   document.getElementById('steps').style.display = 'flex';
   const secs = 34 + Math.round(Math.random()*30); // simulated prep time, seconds
 
@@ -267,7 +272,7 @@ function showResult(c, instant){
     : `<b>Stopped for a human → ${c.queue}</b>${c.reason}`;
   document.getElementById('actions').classList.add('show');
   const rb = document.getElementById('runBtn');
-  if(rb){ rb.disabled = true; rb.textContent = 'Agent ran — handler decision needed'; }
+  if(rb){ rb.disabled = true; rb.textContent = 'ClaimFlow ran — your decision as handler'; }
 }
 function decide(approved){
   const c = CLAIMS[selected];
