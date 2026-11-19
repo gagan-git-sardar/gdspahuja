@@ -93,7 +93,7 @@
 </header>
 <div class="wrap" style="padding:14px 20px 0;">
   <div style="background:#eef6fd;border:1px solid #cfe3f5;border-radius:12px;padding:12px 16px;font-size:14px;">
-    <b>How to try it:</b> &nbsp;1. Pick a claim from the queue. &nbsp;2. Press <b>Run ClaimFlow</b> and watch the four steps work. &nbsp;3. You are the handler: approve the routing, or override it.
+    <b>How to try it:</b> &nbsp;1. Pick a claim from the queue. &nbsp;2. Press <b>Run ClaimFlow</b> and watch the four steps work. &nbsp;3. You are the handler: approve the routing, or override it. &nbsp;<button id="runAllBtn" onclick="runAll()" style="background:#0b5fa5;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-weight:650;cursor:pointer;">Run the whole queue</button>
   </div>
 </div>
 
@@ -286,7 +286,30 @@ function decide(approved){
   document.getElementById('actions').classList.remove('show');
   renderQueue();
 }
+async function runAll(){
+  if(running) return;
+  running = true;
+  const btn = document.getElementById('runAllBtn');
+  if(btn){ btn.disabled = true; btn.textContent = 'Running the queue…'; }
+  for(let i=0;i<CLAIMS.length;i++){
+    const c = CLAIMS[i];
+    if(c.state==='done'||c.state==='human-done'||c.state==='ready'||c.state==='human') continue;
+    c.secs = 30 + Math.round(Math.random()*35);
+    c.state = c.verdict;
+    processed++; totalSecs += c.secs;
+    if(c.verdict==='human') stopped++;
+    document.getElementById('mProcessed').textContent = processed;
+    document.getElementById('mStopped').textContent = stopped;
+    document.getElementById('mTime').textContent = Math.round(totalSecs/processed) + 's';
+    renderQueue();
+    await wait(320);
+  }
+  running = false;
+  if(btn){ btn.disabled = false; btn.textContent = 'Run the whole queue'; }
+  if(selected !== null){ const keep = selected; selected = null; selectClaim(keep); }
+}
 renderQueue();
+selectClaim(0);
 </script>
 </body>
 </html>
